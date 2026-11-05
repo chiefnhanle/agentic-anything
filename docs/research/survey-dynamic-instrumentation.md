@@ -1,5 +1,14 @@
 # Survey: Dynamic instrumentation as an agent control interface (for software the owner controls)
 
+> **STATUS: PARTIAL / TRUNCATED (2026-11-05).** Writing this report was stopped partway through
+> section 3, and the remaining sections were not produced. Sections 1-2 (summary, authorization
+> boundary) are usable. For REA's Frida/GDB/Rizin/Inspector patterns use
+> `rea-runtime-observation-surfaces.md` and `salvaged/dynamic-instrumentation.json`.
+> Additional fact from this pass: REA also ships a macOS LLDB call tracer
+> (`src/native/LldbCallTracer.ts`, `bridge/native/rea_lldb_tracer.py`). Instrumentation is the
+> last-resort rung (own software only) and is not load-bearing for the CLI/API framework design.
+
+
 Research date: 2026-11-05
 
 Technique family: `dynamic-instrumentation`. This rebuilds the lost full report from its salvaged summary (`docs/research/salvaged/dynamic-instrumentation.json`), checks it against primary sources, and goes further. Comparison baseline: the local REA fork at `/Users/nhanclie/rea` (`rea-agents` 6.8.0, HEAD `3484432fb`). It was read only; nothing was built or run. REA paths below are relative to that checkout.
@@ -49,3 +58,5 @@ Related reports (referenced here, not repeated):
 ## 3. Observe vs drive: a taxonomy for an agent
 
 | Class
+
+*(Report ends here: truncated.)*
