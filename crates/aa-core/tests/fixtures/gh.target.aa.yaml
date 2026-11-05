@@ -1,0 +1,18 @@
+schema: aa.overlay/v1
+target: gh
+display_name: GitHub CLI
+mcp_prefix: gh
+authorization: "Owner workstation; gh is MIT-licensed; automating my own account."
+harvest:
+  - harvester: cobra-complete@1
+    commands: [alias]
+defaults:
+  binding:
+    env: { GH_CONFIG_DIR: "{root}/home/.config/gh", GH_PROMPT_DISABLED: "1", NO_COLOR: "1" }
+    deadline_ms: 15000
+capabilities:
+  gh.alias.list:
+    core: true
+    examples:
+      - { input: {} }
+      - { input: {} }

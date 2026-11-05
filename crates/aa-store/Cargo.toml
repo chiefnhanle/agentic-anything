@@ -1,0 +1,25 @@
+[package]
+name = "aa-store"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Workspace layout, CAS, hash-chained JSONL audit, intent recovery, halt persistence (WP4)"
+
+[dependencies]
+aa-core.workspace = true
+pbjson-types.workspace = true
+fd-lock.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rustix.workspace = true
+tracing.workspace = true
+tempfile.workspace = true
+
+[dev-dependencies]
+aa-core = { workspace = true, features = ["testing"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,1144 @@
+---
+source: crates/aa-core/tests/compile_golden.rs
+expression: pretty(lock)
+---
+{
+  "capabilities": [
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--output",
+              "pointer": "/output",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--format",
+              "pointer": "/format",
+              "style": "ARG_STYLE_OPTION"
+            }
+          ],
+          "commandPath": [
+            "export"
+          ],
+          "deadlineMs": 20000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--json"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "usageExitCode": 2
+        }
+      },
+      "capabilityDigest": "ba35238d274e5dda39bc748004396ffe553d0f83b52fcc9060f6a69a86a877a2",
+      "description": {
+        "source": "click-help",
+        "text": "Export the project to a file."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE",
+        "writesFilesystem": "TRI_TRUE"
+      },
+      "family": "export",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "fixture-notes.export",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"format\":{\"enum\":[\"txt\",\"md\"]},\"output\":{\"format\":\"path\",\"type\":\"string\"}},\"required\":[\"output\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "export",
+        "mcpName": "notes_export"
+      },
+      "provenance": {
+        "nativeIds": [
+          "export"
+        ],
+        "sourceShas": [
+          "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_WRITE_PATH",
+          "pointer": "/output"
+        }
+      ],
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "writes_filesystem",
+          "rationale": "output parameter --output",
+          "source": "rule:cli-options@1",
+          "value": "TRI_TRUE"
+        }
+      ],
+      "targetId": "fixture-notes",
+      "title": {
+        "source": "harvest",
+        "text": "Export the project to a file."
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--text",
+              "pointer": "/text",
+              "style": "ARG_STYLE_OPTION"
+            }
+          ],
+          "commandPath": [
+            "notes",
+            "add"
+          ],
+          "deadlineMs": 20000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--json"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "usageExitCode": 2
+        }
+      },
+      "capabilityDigest": "251a271085fa44daab08f2e82ac7b55163e0950f6c9c59010f942016dc2959e2",
+      "description": {
+        "source": "click-help",
+        "text": "Add a note to the project."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_TRUE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE",
+        "writesFilesystem": "TRI_TRUE"
+      },
+      "family": "notes",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "fixture-notes.notes.add",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"text\":{\"type\":\"string\"}},\"required\":[\"text\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "oracles": [
+        {
+          "readBack": {
+            "argsTemplateJson": "{}",
+            "capabilityId": "fixture-notes.notes.list",
+            "predicates": [
+              {
+                "op": "PREDICATE_OP_COUNT_DELTA",
+                "pointer": "/notes",
+                "valueJson": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "projections": {
+        "cliPath": "notes add",
+        "mcpName": "notes_notes_add"
+      },
+      "provenance": {
+        "nativeIds": [
+          "notes add"
+        ],
+        "sourceShas": [
+          "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "mutates_target",
+          "rationale": "leaf verb 'add'",
+          "source": "rule:cli-verbs@1",
+          "value": "TRI_TRUE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "writes_filesystem",
+          "rationale": "autosave: a mutating command rewrites its state handle (--project file)",
+          "source": "rule:cli-anything@1",
+          "value": "TRI_TRUE"
+        }
+      ],
+      "targetId": "fixture-notes",
+      "title": {
+        "source": "harvest",
+        "text": "Add a note to the project."
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "notes",
+            "lenient"
+          ],
+          "deadlineMs": 20000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--json"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "usageExitCode": 2
+        }
+      },
+      "capabilityDigest": "1d25d02934ad9fe49f2a569bb3fa7973f0fee8da9566a3bd983c08f46c589527",
+      "description": {
+        "source": "click-help",
+        "text": "Show notes, accepting unknown options."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "notes",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "fixture-notes.notes.lenient",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes lenient",
+        "mcpName": "notes_notes_lenient"
+      },
+      "provenance": {
+        "nativeIds": [
+          "notes lenient"
+        ],
+        "sourceShas": [
+          "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "fixture-notes",
+      "title": {
+        "source": "harvest",
+        "text": "Show notes, accepting unknown options."
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; likely READ ('list'); lanes or an operator assumption must decide them: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "notes",
+            "list"
+          ],
+          "deadlineMs": 20000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--json"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "usageExitCode": 2
+        }
+      },
+      "capabilityDigest": "70c4352a46b6bb4c9a8f5fb2d5455a8b87d999ad50a2810c1e6f59c9329ef808",
+      "core": true,
+      "description": {
+        "source": "click-help",
+        "text": "List the notes in the project."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "examples": [
+        {
+          "fixtureId": "empty-project",
+          "inputJson": "{}",
+          "source": "overlay"
+        },
+        {
+          "fixtureId": "empty-project",
+          "inputJson": "{}",
+          "source": "overlay"
+        }
+      ],
+      "family": "notes",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "fixture-notes.notes.list",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes list",
+        "mcpName": "notes_notes_list"
+      },
+      "provenance": {
+        "nativeIds": [
+          "notes list"
+        ],
+        "sourceShas": [
+          "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "fixture-notes",
+      "title": {
+        "source": "harvest",
+        "text": "List the notes in the project."
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "pointer": "/index",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "notes",
+            "remove"
+          ],
+          "deadlineMs": 20000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--json"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "usageExitCode": 2
+        }
+      },
+      "capabilityDigest": "d794bff88053614867f072472fe4a6e9b07a78a359476a7ab21e7d4b6c3a0ba0",
+      "description": {
+        "source": "click-help",
+        "text": "Remove a note by index."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mayDiscardData": "TRI_TRUE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "notes",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "fixture-notes.notes.remove",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"index\":{\"type\":\"integer\"}},\"required\":[\"index\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes remove",
+        "mcpName": "notes_notes_remove"
+      },
+      "provenance": {
+        "nativeIds": [
+          "notes remove"
+        ],
+        "sourceShas": [
+          "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "may_discard_data",
+          "rationale": "leaf verb 'remove'",
+          "source": "rule:cli-verbs@1",
+          "value": "TRI_TRUE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "fixture-notes",
+      "title": {
+        "source": "harvest",
+        "text": "Remove a note by index."
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "notes",
+            "stats"
+          ],
+          "deadlineMs": 20000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--json"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "usageExitCode": 2
+        }
+      },
+      "capabilityDigest": "bfb4c4b658ad4c2c0f2640cc1a18067cca69c63932cb52a7b34a4a3248e4fd9d",
+      "description": {
+        "source": "click-help",
+        "text": "Show note statistics."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "notes",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "fixture-notes.notes.stats",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes stats",
+        "mcpName": "notes_notes_stats"
+      },
+      "provenance": {
+        "nativeIds": [
+          "notes stats"
+        ],
+        "sourceShas": [
+          "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "fixture-notes",
+      "title": {
+        "source": "harvest",
+        "text": "Show note statistics."
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify fixture-notes",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          },
+          {
+            "hint": "REPL/TTY-only surface; never served one-shot (rule:cli-anything@1)",
+            "reason": "WITHHELD_REASON_INTERACTIVE"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "repl"
+          ],
+          "deadlineMs": 20000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--json"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "usageExitCode": 2
+        }
+      },
+      "capabilityDigest": "1f51cd0f2d404f354e1ddf784daf8f4c82bf2de54c84bc5e1777d8783ec65388",
+      "description": {
+        "source": "click-help",
+        "text": "Start an interactive session."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "repl",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "fixture-notes.repl",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_SESSION",
+      "projections": {
+        "cliPath": "repl",
+        "mcpName": "notes_repl",
+        "mcpOmit": true
+      },
+      "provenance": {
+        "nativeIds": [
+          "repl"
+        ],
+        "sourceShas": [
+          "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "fixture-notes",
+      "title": {
+        "source": "harvest",
+        "text": "Start an interactive session."
+      }
+    }
+  ],
+  "lockDigest": "d880711349430929ad6c2f7a749892425b90377a7814ca3b2e14a3176b0d4946",
+  "overlaySha256": "98b416a6208451f9ef4baffad4954d9b7827ad2d94b87439a9dfff374cb92e46",
+  "ruleVersions": {
+    "cli-anything": "1",
+    "cli-options": "1",
+    "cli-verbs": "1",
+    "click-info": "1",
+    "compile": "1",
+    "exclusions": "1"
+  },
+  "schema": "aa.lock/v1",
+  "target": {
+    "authorizationStatement": "test",
+    "displayName": "Notes fixture",
+    "families": [
+      "export",
+      "notes",
+      "repl"
+    ],
+    "fixtures": [
+      {
+        "id": "empty-project",
+        "steps": [
+          {
+            "file": {
+              "content": "eyJub3RlcyI6IFtdfQo=",
+              "path": "project.json"
+            }
+          }
+        ]
+      }
+    ],
+    "id": "fixture-notes",
+    "identity": {
+      "files": [
+        {
+          "realpath": "/venv/bin/notes-cli",
+          "role": "executable",
+          "sha256": "0c8ebe7b859b7de34dea3861351753cc6c767d29fb0ce9876b1686a1779454c6"
+        },
+        {
+          "realpath": "/venv/bin/python3",
+          "role": "interpreter",
+          "sha256": "4d102384ded633c24f1031e288c2ecf1ababc4ef37e402995ad37064232eefd1"
+        }
+      ],
+      "identityDigest": "273508dc8381a705a77e4377c1ef2812288b5f9f09c575de5a8223f0fb2f62b6"
+    },
+    "kind": "TARGET_KIND_CLI_TOOL",
+    "mcpPrefix": "notes",
+    "sources": [
+      {
+        "actionId": "act_01TESTHARVEST",
+        "authority": "DISCOVERY_AUTHORITY_INTROSPECT",
+        "harvestedAt": "2026-11-05T22:10:04+00:00",
+        "harvester": "click-info@1",
+        "sha256": "066d5b3d574e69c6c25224772d5c25bd0685722cc713527b0d7601ea98947c97",
+        "uri": "argv:python -I aa_click_info.py notes-cli"
+      }
+    ],
+    "status": "TARGET_STATUS_SCAFFOLDED"
+  }
+}

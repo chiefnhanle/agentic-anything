@@ -1,0 +1,28 @@
+schema: aa.overlay/v1
+target: fixture-notes
+display_name: Notes fixture
+mcp_prefix: notes
+authorization: "Test fixture; my own code."
+harvest:
+  - harvester: click-info@1
+state_handle: { flag: --project, engine_supplied: true }
+defaults:
+  binding:
+    deadline_ms: 20000
+fixtures:
+  - id: empty-project
+    steps:
+      - file: { path: project.json, content: "{\"notes\": []}\n" }
+capabilities:
+  fixture-notes.notes.list:
+    core: true
+    examples:
+      - { input: {}, fixture: empty-project }
+      - { input: {}, fixture: empty-project }
+  fixture-notes.notes.add:
+    oracle:
+      read_back:
+        capability: fixture-notes.notes.list
+        args: {}
+        predicates:
+          - { pointer: /notes, op: COUNT_DELTA, value: 1 }

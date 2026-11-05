@@ -1,0 +1,574 @@
+{
+ "click_version": "8.5.0",
+ "distribution": {
+  "name": "notes-cli",
+  "version": "0.1.0"
+ },
+ "entry_point": "notes",
+ "entry_value": "notes_cli.cli:main",
+ "main_module": "notes_cli",
+ "protocol": "aa-click-info/1",
+ "root": {
+  "chain": false,
+  "commands": {
+   "export": {
+    "deprecated": false,
+    "epilog": null,
+    "help": "Export notes to a file.",
+    "hidden": false,
+    "name": "export",
+    "params": [
+     {
+      "count": false,
+      "default": null,
+      "envvar": null,
+      "flag_value": null,
+      "help": "Destination file",
+      "hidden": false,
+      "is_flag": false,
+      "multiple": false,
+      "name": "output_path",
+      "nargs": 1,
+      "opts": [
+       "--output"
+      ],
+      "param_type_name": "option",
+      "prompt": null,
+      "required": true,
+      "secondary_opts": [],
+      "type": {
+       "allow_dash": false,
+       "dir_okay": false,
+       "exists": false,
+       "file_okay": true,
+       "name": "file",
+       "param_type": "Path",
+       "readable": true,
+       "writable": true
+      }
+     },
+     {
+      "count": false,
+      "default": "txt",
+      "envvar": null,
+      "flag_value": null,
+      "help": "Output format",
+      "hidden": false,
+      "is_flag": false,
+      "multiple": false,
+      "name": "fmt",
+      "nargs": 1,
+      "opts": [
+       "--format"
+      ],
+      "param_type_name": "option",
+      "prompt": null,
+      "required": false,
+      "secondary_opts": [],
+      "type": {
+       "case_sensitive": true,
+       "choices": [
+        "txt",
+        "json"
+       ],
+       "name": "choice",
+       "param_type": "Choice"
+      }
+     },
+     {
+      "count": false,
+      "default": false,
+      "envvar": null,
+      "flag_value": true,
+      "help": "Show this message and exit.",
+      "hidden": false,
+      "is_flag": true,
+      "multiple": false,
+      "name": "_click_default_help",
+      "nargs": 1,
+      "opts": [
+       "--help"
+      ],
+      "param_type_name": "option",
+      "prompt": null,
+      "required": false,
+      "secondary_opts": [],
+      "type": {
+       "name": "boolean",
+       "param_type": "Bool"
+      }
+     }
+    ],
+    "short_help": null
+   },
+   "notes": {
+    "chain": false,
+    "commands": {
+     "add": {
+      "deprecated": false,
+      "epilog": null,
+      "help": "Add a note.",
+      "hidden": false,
+      "name": "add",
+      "params": [
+       {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": "Note text",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "text",
+        "nargs": 1,
+        "opts": [
+         "--text"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+         "name": "text",
+         "param_type": "String"
+        }
+       },
+       {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": "Tag (repeatable)",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": true,
+        "name": "tags",
+        "nargs": 1,
+        "opts": [
+         "--tag"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "text",
+         "param_type": "String"
+        }
+       },
+       {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Show this message and exit.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "_click_default_help",
+        "nargs": 1,
+        "opts": [
+         "--help"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "boolean",
+         "param_type": "Bool"
+        }
+       }
+      ],
+      "short_help": null
+     },
+     "lenient": {
+      "deprecated": false,
+      "epilog": null,
+      "help": "Echo words; silently accepts unknown options.",
+      "hidden": false,
+      "name": "lenient",
+      "params": [
+       {
+        "default": null,
+        "envvar": null,
+        "help": null,
+        "multiple": false,
+        "name": "words",
+        "nargs": -1,
+        "opts": [
+         "words"
+        ],
+        "param_type_name": "argument",
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "text",
+         "param_type": "String"
+        }
+       },
+       {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Show this message and exit.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "_click_default_help",
+        "nargs": 1,
+        "opts": [
+         "--help"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "boolean",
+         "param_type": "Bool"
+        }
+       }
+      ],
+      "short_help": null
+     },
+     "list": {
+      "deprecated": false,
+      "epilog": null,
+      "help": "List notes.",
+      "hidden": false,
+      "name": "list",
+      "params": [
+       {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": "Maximum notes to show",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "limit",
+        "nargs": 1,
+        "opts": [
+         "--limit"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "clamp": false,
+         "max": 1000,
+         "max_open": false,
+         "min": 1,
+         "min_open": false,
+         "name": "integer range",
+         "param_type": "IntRange"
+        }
+       },
+       {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": "Only notes with this tag",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "tag",
+        "nargs": 1,
+        "opts": [
+         "--tag"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "text",
+         "param_type": "String"
+        }
+       },
+       {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Show this message and exit.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "_click_default_help",
+        "nargs": 1,
+        "opts": [
+         "--help"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "boolean",
+         "param_type": "Bool"
+        }
+       }
+      ],
+      "short_help": null
+     },
+     "remove": {
+      "deprecated": false,
+      "epilog": null,
+      "help": "Remove a note by index.",
+      "hidden": false,
+      "name": "remove",
+      "params": [
+       {
+        "default": null,
+        "envvar": null,
+        "help": null,
+        "multiple": false,
+        "name": "index",
+        "nargs": 1,
+        "opts": [
+         "index"
+        ],
+        "param_type_name": "argument",
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+         "name": "integer",
+         "param_type": "Int"
+        }
+       },
+       {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Show this message and exit.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "_click_default_help",
+        "nargs": 1,
+        "opts": [
+         "--help"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "boolean",
+         "param_type": "Bool"
+        }
+       }
+      ],
+      "short_help": null
+     },
+     "stats": {
+      "deprecated": false,
+      "epilog": null,
+      "help": "Show note statistics (read-only).",
+      "hidden": false,
+      "name": "stats",
+      "params": [
+       {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Show this message and exit.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "_click_default_help",
+        "nargs": 1,
+        "opts": [
+         "--help"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+         "name": "boolean",
+         "param_type": "Bool"
+        }
+       }
+      ],
+      "short_help": null
+     }
+    },
+    "deprecated": false,
+    "epilog": null,
+    "help": "Note management commands.",
+    "hidden": false,
+    "name": "notes",
+    "params": [
+     {
+      "count": false,
+      "default": false,
+      "envvar": null,
+      "flag_value": true,
+      "help": "Show this message and exit.",
+      "hidden": false,
+      "is_flag": true,
+      "multiple": false,
+      "name": "_click_default_help",
+      "nargs": 1,
+      "opts": [
+       "--help"
+      ],
+      "param_type_name": "option",
+      "prompt": null,
+      "required": false,
+      "secondary_opts": [],
+      "type": {
+       "name": "boolean",
+       "param_type": "Bool"
+      }
+     }
+    ],
+    "short_help": null
+   },
+   "repl": {
+    "deprecated": false,
+    "epilog": null,
+    "help": "Interactive REPL.",
+    "hidden": false,
+    "name": "repl",
+    "params": [
+     {
+      "count": false,
+      "default": false,
+      "envvar": null,
+      "flag_value": true,
+      "help": "Show this message and exit.",
+      "hidden": false,
+      "is_flag": true,
+      "multiple": false,
+      "name": "_click_default_help",
+      "nargs": 1,
+      "opts": [
+       "--help"
+      ],
+      "param_type_name": "option",
+      "prompt": null,
+      "required": false,
+      "secondary_opts": [],
+      "type": {
+       "name": "boolean",
+       "param_type": "Bool"
+      }
+     }
+    ],
+    "short_help": null
+   }
+  },
+  "deprecated": false,
+  "epilog": null,
+  "help": "Notes CLI -- stateful note keeping. Run without a subcommand for a REPL.",
+  "hidden": false,
+  "name": "cli",
+  "params": [
+   {
+    "count": false,
+    "default": false,
+    "envvar": null,
+    "flag_value": true,
+    "help": "Output as JSON",
+    "hidden": false,
+    "is_flag": true,
+    "multiple": false,
+    "name": "as_json",
+    "nargs": 1,
+    "opts": [
+     "--json"
+    ],
+    "param_type_name": "option",
+    "prompt": null,
+    "required": false,
+    "secondary_opts": [],
+    "type": {
+     "name": "boolean",
+     "param_type": "Bool"
+    }
+   },
+   {
+    "count": false,
+    "default": null,
+    "envvar": null,
+    "flag_value": null,
+    "help": "Path to the notes project file",
+    "hidden": false,
+    "is_flag": false,
+    "multiple": false,
+    "name": "project_path",
+    "nargs": 1,
+    "opts": [
+     "--project"
+    ],
+    "param_type_name": "option",
+    "prompt": null,
+    "required": false,
+    "secondary_opts": [],
+    "type": {
+     "name": "text",
+     "param_type": "String"
+    }
+   },
+   {
+    "count": false,
+    "default": false,
+    "envvar": null,
+    "flag_value": true,
+    "help": "Run without saving changes to disk",
+    "hidden": false,
+    "is_flag": true,
+    "multiple": false,
+    "name": "dry_run",
+    "nargs": 1,
+    "opts": [
+     "--dry-run"
+    ],
+    "param_type_name": "option",
+    "prompt": null,
+    "required": false,
+    "secondary_opts": [],
+    "type": {
+     "name": "boolean",
+     "param_type": "Bool"
+    }
+   },
+   {
+    "count": false,
+    "default": false,
+    "envvar": null,
+    "flag_value": true,
+    "help": "Show this message and exit.",
+    "hidden": false,
+    "is_flag": true,
+    "multiple": false,
+    "name": "_click_default_help",
+    "nargs": 1,
+    "opts": [
+     "--help"
+    ],
+    "param_type_name": "option",
+    "prompt": null,
+    "required": false,
+    "secondary_opts": [],
+    "type": {
+     "name": "boolean",
+     "param_type": "Bool"
+    }
+   }
+  ],
+  "short_help": null
+ },
+ "root_selection": "unique_root_group"
+}

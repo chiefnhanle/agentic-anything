@@ -1,0 +1,38 @@
+[package]
+name = "aa-core"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Pure core of agentic-anything: ids, digests, errors, effects, manifest compile, admission, policy, shared traits"
+
+[features]
+# Exposes `api::testing` (FakeRunner, MemoryAudit) to other crates' tests.
+testing = []
+
+[dependencies]
+aa-proto.workspace = true
+pbjson-types.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_json_canonicalizer.workspace = true
+serde_yaml_ng.workspace = true
+toml.workspace = true
+sha2.workspace = true
+hmac.workspace = true
+ulid.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+jsonschema.workspace = true
+regex.workspace = true
+globset.workspace = true
+
+[dev-dependencies]
+prost.workspace = true
+proptest.workspace = true
+insta.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

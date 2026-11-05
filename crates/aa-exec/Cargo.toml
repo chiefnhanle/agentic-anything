@@ -1,0 +1,43 @@
+[package]
+name = "aa-exec"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Supervision kernel, Seatbelt confinement, cli_argv binding and L1/L3 lanes (WP2)"
+
+# Test helper for the supervision torture tests (build-plan §3.2): ignores SIGTERM, forks grandchildren,
+# floods stdout. Integration tests locate it through CARGO_BIN_EXE_torture.
+[[bin]]
+name = "torture"
+path = "tests/bin/torture.rs"
+test = false
+doc = false
+bench = false
+
+[dependencies]
+aa-core.workspace = true
+pbjson-types.workspace = true
+tokio.workspace = true
+process-wrap.workspace = true
+rustix.workspace = true
+nix.workspace = true
+tempfile.workspace = true
+walkdir.workspace = true
+blake3.workspace = true
+which.workspace = true
+async-trait.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+sha2.workspace = true
+regex.workspace = true
+
+[dev-dependencies]
+aa-core = { workspace = true, features = ["testing"] }
+tempfile.workspace = true
+proptest.workspace = true
+
+[lints]
+workspace = true

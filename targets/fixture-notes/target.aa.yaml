@@ -1,0 +1,62 @@
+# Overlay for the hermetic Click fixture `notes_cli` (crates/aa-harvest/tests/fixtures/notes_cli), which is shaped
+# like a CLI-Anything harness: root group with --json/--project/--dry-run globals, a main() wrapper, {"error","type"}
+# JSON errors, an auto-save result callback, and two deliberate lies the lanes must catch.
+#
+#   uv venv .venv && uv pip install --python .venv/bin/python crates/aa-harvest/tests/fixtures/notes_cli
+#   aa target add fixture-notes --python-script .venv/bin/notes \
+#      --overlay targets/fixture-notes/target.aa.yaml --authorization "hermetic test fixture"
+#   aa discover fixture-notes && aa verify fixture-notes && aa list fixture-notes
+#
+# Expected after `aa verify` (crates/aa-cli/tests/e2e_click.rs):
+#   fixture-notes.notes.list     SERVABLE (READ)
+#   fixture-notes.notes.stats    WITHHELD SIDE_EFFECT     (claims to read, writes ~/.cache/notes/stats)
+#   fixture-notes.notes.lenient  WITHHELD PARSER_MISMATCH (ignore_unknown_options accepts the L1 probe)
+#   fixture-notes.repl           WITHHELD INTERACTIVE
+#   fixture-notes.notes.add      WITHHELD NOT_VERIFIED    (WRITE needs L4 read-back: slice 2)
+schema: aa.overlay/v1
+target: fixture-notes
+display_name: Notes (hermetic Click fixture)
+mcp_prefix: notes
+authorization: "Hermetic test fixture in this repository (Apache-2.0); automating it is the point of the test."
+
+harvest:
+  - harvester: click-info@1            # python -I aa_click_info.py <entry_point>; the shim never invokes the group
+    options: { entry_point: notes }    # the [project.scripts] name in notes_cli/pyproject.toml
+
+defaults:
+  binding:
+    global_args: ["--json"]            # CLI-Anything convention: --json is fixed, never exposed
+    deadline_ms: 20000
+    max_output_bytes: 4194304
+    usage_exit_code: 2                 # Click UsageError
+
+# --project is the CLI-Anything state handle: the engine supplies a path in the session workspace, so agents never
+# choose where the project file lives.
+state_handle: { flag: --project, engine_supplied: true }
+
+capabilities:
+  fixture-notes.notes.list:
+    core: true
+    examples:
+      - { input: {} }
+      - { input: { limit: 5 } }
+  fixture-notes.notes.stats:
+    examples:
+      - { input: {} }
+      - { input: {} }
+  fixture-notes.notes.lenient:
+    examples:
+      - { input: { words: [alpha] } }
+      - { input: { words: [beta, gamma] } }
+  fixture-notes.notes.add:
+    oracle:
+      read_back:
+        capability: fixture-notes.notes.list
+        args: {}
+        predicates:
+          - { pointer: /notes, op: COUNT_DELTA, value: 1 }
+    examples:
+      - { input: { text: hello } }
+      - { input: { text: world, tags: [t1] } }
+  fixture-notes.export:
+    scopes: [ { pointer: /output_path, kind: WRITE_PATH } ]

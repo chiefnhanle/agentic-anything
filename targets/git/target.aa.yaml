@@ -1,0 +1,115 @@
+# Overlay for git (architecture §7.3), verified against git 2.48.1 on macOS.
+#
+#   aa target add git --exec git --overlay targets/git/target.aa.yaml --authorization "owner workstation"
+#   aa discover git && aa verify git && aa list git
+#
+# Facts this overlay relies on (verified 2026-11-05 in a scratch repo):
+# - plain `git status` rewrites .git/index after a file's mtime changes; `--no-optional-locks` does not;
+# - unknown flags exit 129 (parse-options usage);
+# - `git branch -d -- <missing>` exits 1 with "error: branch '<x>' not found";
+# - `git add -- <path>` and `git log ... --` accept the `--` separator.
+schema: aa.overlay/v1
+target: git
+display_name: Git
+mcp_prefix: git
+locator: { executable: git }              # resolved to /opt/homebrew/Cellar/git/2.48.1/bin/git, sha256 pinned
+authorization: "Owner workstation; git is GPL-2.0 free software; automating my own repositories."
+
+harvest:
+  - harvester: help-text@1                 # git prints parse-options usage on `<cmd> -h` (exit 129)
+    commands: [status, log, branch, add, rev-parse]   # curated include-list; git has ~150 commands
+    help_argv: ["{command}", "-h"]
+
+defaults:
+  binding:
+    # --no-optional-locks: without it, L3 observed `status` rewriting .git/index (SIDE_EFFECT).
+    global_args: ["--no-optional-locks", "-c", "core.pager=cat", "-c", "color.ui=never"]
+    env: { GIT_CONFIG_NOSYSTEM: "1", GIT_TERMINAL_PROMPT: "0", GIT_OPTIONAL_LOCKS: "0" }
+    deadline_ms: 15000
+    max_output_bytes: 8388608
+    usage_exit_code: 129
+
+fixtures:
+  - id: one-commit-repo
+    steps:
+      - argv: [git, init, -q, repo]
+      - file: { path: repo/README, content: "hello\n" }
+      - argv: [git, -C, repo, add, README]
+      - argv: [git, -C, repo, -c, user.name=aa, -c, user.email=aa@localhost, commit, -qm, init]
+      - argv: [git, -C, repo, branch, feature-x]
+    ready: git.status
+  - id: repo-with-untracked
+    steps:
+      - include_fixture: one-commit-repo
+      - file: { path: repo/NEW.txt, content: "new\n" }
+      - file: { path: repo/docs/a.md, content: "a\n" }
+    ready: git.status
+
+capabilities:
+  git.status:
+    # Curated to the two options the lock serves (§7.3). git's parse-options accepts e.g. `--find-renames=<junk>`
+    # (exit 0), so L1 would rightly flag PARSER_MISMATCH if every harvested option stayed exposed.
+    binding:
+      args:
+        - { pointer: /untracked_files, style: OPTION, flag: --untracked-files }
+        - { pointer: /ignored, style: OPTION, flag: --ignored }
+    fixed_args: ["--porcelain=v2", "--branch"]
+    scopes: [ { pointer: /repo, kind: READ_PATH } ]
+    cwd_pointer: /repo
+    core: true
+    examples:
+      - { input: { repo: { $root: /repo } }, fixture: one-commit-repo }
+      - { input: { repo: { $root: /repo }, untracked_files: "no" }, fixture: one-commit-repo }
+  git.log:
+    # §7.3 serves --max-count/--author, but `git log -h` lists only log-specific options (those two are revision
+    # options), and compile accepts binding.args only for harvested parameters. Until overlays may add parameters,
+    # git.log is curated to harvested flags.
+    binding:
+      args:
+        - { pointer: /source, style: NEGATABLE_FLAG, flag: --source }
+        - { pointer: /use_mailmap, style: NEGATABLE_FLAG, flag: --use-mailmap }
+    fixed_args: ["--format=%H%x09%an%x09%aI%x09%s"]
+    scopes: [ { pointer: /repo, kind: READ_PATH } ]
+    cwd_pointer: /repo
+    core: true
+    examples:
+      - { input: { repo: { $root: /repo } }, fixture: one-commit-repo }
+      - { input: { repo: { $root: /repo }, use_mailmap: false }, fixture: one-commit-repo }
+  git.add:
+    scopes: [ { pointer: /repo, kind: WRITE_PATH } ]
+    cwd_pointer: /repo
+    oracle:
+      read_back:
+        capability: git.status
+        args: { repo: { $input: /repo } }
+        predicates:
+          - { pointer: /lines, op: CONTAINS, value: { $input: /pathspec/0 } }   # "1 A. … <path>"
+    examples:
+      - { input: { repo: { $root: /repo }, pathspec: [NEW.txt] }, fixture: repo-with-untracked }
+      - { input: { repo: { $root: /repo }, pathspec: [docs/] }, fixture: repo-with-untracked }
+  git.branch.delete:
+    binding:                                                         # `git branch` is one native command; split by mode
+      command_path: [branch]
+      fixed_args: ["--delete"]
+      args:
+        - { pointer: /force, style: FLAG, flag: --force }
+        - { pointer: /name, style: POSITIONAL, position: 0 }
+    branches:
+      - { pointer: /force, effects: { irreversible: true } }        # -D deletes unmerged work
+    scopes: [ { pointer: /repo, kind: WRITE_PATH } ]
+    cwd_pointer: /repo
+    oracle:
+      negative:
+        capability: git.branch.list
+        args: { repo: { $input: /repo } }
+        predicates: [ { pointer: /lines, op: ABSENT, value: { $input: /name } } ]
+        bogus_input: { repo: { $root: /repo }, name: aa-no-such-branch }   # must fail (exit 1)
+  git.branch.list:
+    binding: { command_path: [branch], fixed_args: ["--list", "--format=%(refname:short)"] }
+    scopes: [ { pointer: /repo, kind: READ_PATH } ]
+    cwd_pointer: /repo
+    examples:                              # L1 control run and L3 (>= 2 examples) need inputs
+      - { input: { repo: { $root: /repo } }, fixture: one-commit-repo }
+      - { input: { repo: { $root: /repo } }, fixture: repo-with-untracked }
+exclude:
+  - { capability: git.branch.edit-description, reason: "launches $EDITOR (interactive)" }

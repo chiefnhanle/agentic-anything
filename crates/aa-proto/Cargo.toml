@@ -1,0 +1,31 @@
+[package]
+name = "aa-proto"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Generated agentic-anything v1 messages, optional tonic services, descriptor set and RPC_POLICY table"
+
+[features]
+grpc = ["dep:tonic", "dep:tonic-prost"]
+
+[dependencies]
+prost.workspace = true
+prost-types.workspace = true
+pbjson.workspace = true
+pbjson-types.workspace = true
+serde.workspace = true
+tonic = { workspace = true, optional = true }
+tonic-prost = { workspace = true, optional = true }
+
+[build-dependencies]
+tonic-prost-build.workspace = true
+pbjson-build.workspace = true
+prost-reflect.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

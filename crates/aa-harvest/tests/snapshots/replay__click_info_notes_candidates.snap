@@ -1,0 +1,593 @@
+---
+source: crates/aa-harvest/tests/replay.rs
+expression: snap
+---
+[
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--output",
+              "pointer": "/output_path",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--format",
+              "pointer": "/fmt",
+              "style": "ARG_STYLE_OPTION"
+            }
+          ],
+          "commandPath": [
+            "export"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "interpreter",
+          "globalArgs": [
+            "--json"
+          ],
+          "interpreterArgs": [
+            "-I",
+            "-m",
+            "notes_cli"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "stateHandlePointer": "/project",
+          "usageExitCode": 2
+        }
+      },
+      "description": {
+        "source": "click-info:export",
+        "text": "Export notes to a file."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "family": "export",
+      "id": "notes.export",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"fmt\":{\"enum\":[\"txt\",\"json\"],\"type\":\"string\"},\"output_path\":{\"format\":\"path\",\"type\":\"string\"}},\"required\":[\"output_path\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "export"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_DECLARED"
+        },
+        "nativeIds": [
+          "export"
+        ],
+        "sourceShas": [
+          "962940681f0337bf9330385945887e8f60c4d108ada2b676678dafc80617de24"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_WRITE_PATH",
+          "pointer": "/output_path"
+        },
+        {
+          "kind": "SCOPE_KIND_STATE_HANDLE",
+          "pointer": "/project"
+        }
+      ],
+      "targetId": "notes",
+      "title": {
+        "source": "click-help",
+        "text": "Export notes to a file"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "export"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--text",
+              "pointer": "/text",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--tag",
+              "pointer": "/tags",
+              "style": "ARG_STYLE_REPEATED_OPTION"
+            }
+          ],
+          "commandPath": [
+            "notes",
+            "add"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "interpreter",
+          "globalArgs": [
+            "--json"
+          ],
+          "interpreterArgs": [
+            "-I",
+            "-m",
+            "notes_cli"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "stateHandlePointer": "/project",
+          "usageExitCode": 2
+        }
+      },
+      "description": {
+        "source": "click-info:notes add",
+        "text": "Add a note."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "family": "notes",
+      "id": "notes.notes.add",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"tags\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"required\":[\"text\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes add"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_DECLARED"
+        },
+        "nativeIds": [
+          "notes add"
+        ],
+        "sourceShas": [
+          "962940681f0337bf9330385945887e8f60c4d108ada2b676678dafc80617de24"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_STATE_HANDLE",
+          "pointer": "/project"
+        }
+      ],
+      "targetId": "notes",
+      "title": {
+        "source": "click-help",
+        "text": "Add a note"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "notes",
+      "add"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "pointer": "/words",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "notes",
+            "lenient"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "interpreter",
+          "globalArgs": [
+            "--json"
+          ],
+          "interpreterArgs": [
+            "-I",
+            "-m",
+            "notes_cli"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "stateHandlePointer": "/project",
+          "usageExitCode": 2
+        }
+      },
+      "description": {
+        "source": "click-info:notes lenient",
+        "text": "Echo words; silently accepts unknown options."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "family": "notes",
+      "id": "notes.notes.lenient",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"words\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes lenient"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_DECLARED"
+        },
+        "nativeIds": [
+          "notes lenient"
+        ],
+        "sourceShas": [
+          "962940681f0337bf9330385945887e8f60c4d108ada2b676678dafc80617de24"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_STATE_HANDLE",
+          "pointer": "/project"
+        }
+      ],
+      "targetId": "notes",
+      "title": {
+        "source": "click-help",
+        "text": "Echo words; silently accepts unknown options"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "notes",
+      "lenient"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--limit",
+              "pointer": "/limit",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--tag",
+              "pointer": "/tag",
+              "style": "ARG_STYLE_OPTION"
+            }
+          ],
+          "commandPath": [
+            "notes",
+            "list"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "interpreter",
+          "globalArgs": [
+            "--json"
+          ],
+          "interpreterArgs": [
+            "-I",
+            "-m",
+            "notes_cli"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "stateHandlePointer": "/project",
+          "usageExitCode": 2
+        }
+      },
+      "description": {
+        "source": "click-info:notes list",
+        "text": "List notes."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "family": "notes",
+      "id": "notes.notes.list",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"limit\":{\"maximum\":1000,\"minimum\":1,\"type\":\"integer\"},\"tag\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes list"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_DECLARED"
+        },
+        "nativeIds": [
+          "notes list"
+        ],
+        "sourceShas": [
+          "962940681f0337bf9330385945887e8f60c4d108ada2b676678dafc80617de24"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_STATE_HANDLE",
+          "pointer": "/project"
+        }
+      ],
+      "targetId": "notes",
+      "title": {
+        "source": "click-help",
+        "text": "List notes"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "notes",
+      "list"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "pointer": "/index",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "notes",
+            "remove"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "interpreter",
+          "globalArgs": [
+            "--json"
+          ],
+          "interpreterArgs": [
+            "-I",
+            "-m",
+            "notes_cli"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "stateHandlePointer": "/project",
+          "usageExitCode": 2
+        }
+      },
+      "description": {
+        "source": "click-info:notes remove",
+        "text": "Remove a note by index."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "family": "notes",
+      "id": "notes.notes.remove",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"index\":{\"type\":\"integer\"}},\"required\":[\"index\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes remove"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_DECLARED"
+        },
+        "nativeIds": [
+          "notes remove"
+        ],
+        "sourceShas": [
+          "962940681f0337bf9330385945887e8f60c4d108ada2b676678dafc80617de24"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_STATE_HANDLE",
+          "pointer": "/project"
+        }
+      ],
+      "targetId": "notes",
+      "title": {
+        "source": "click-help",
+        "text": "Remove a note by index"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "notes",
+      "remove"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "notes",
+            "stats"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "interpreter",
+          "globalArgs": [
+            "--json"
+          ],
+          "interpreterArgs": [
+            "-I",
+            "-m",
+            "notes_cli"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "stateHandlePointer": "/project",
+          "usageExitCode": 2
+        }
+      },
+      "description": {
+        "source": "click-info:notes stats",
+        "text": "Show note statistics (read-only)."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "family": "notes",
+      "id": "notes.notes.stats",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "notes stats"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_DECLARED"
+        },
+        "nativeIds": [
+          "notes stats"
+        ],
+        "sourceShas": [
+          "962940681f0337bf9330385945887e8f60c4d108ada2b676678dafc80617de24"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_STATE_HANDLE",
+          "pointer": "/project"
+        }
+      ],
+      "targetId": "notes",
+      "title": {
+        "source": "click-help",
+        "text": "Show note statistics (read-only)"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "notes",
+      "stats"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "repl"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_CLI_ANYTHING_JSON",
+          "executableRole": "interpreter",
+          "globalArgs": [
+            "--json"
+          ],
+          "interpreterArgs": [
+            "-I",
+            "-m",
+            "notes_cli"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_JSON_STDOUT",
+          "stateHandleEngineSupplied": true,
+          "stateHandleFlag": "--project",
+          "stateHandlePointer": "/project",
+          "usageExitCode": 2
+        }
+      },
+      "description": {
+        "source": "click-info:repl",
+        "text": "Interactive REPL."
+      },
+      "dryRun": {
+        "argv": [
+          "--dry-run"
+        ],
+        "kind": "DRY_RUN_KIND_NO_PERSIST",
+        "supported": true
+      },
+      "family": "repl",
+      "id": "notes.repl",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_SESSION",
+      "projections": {
+        "cliPath": "repl"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_DECLARED"
+        },
+        "nativeIds": [
+          "repl"
+        ],
+        "sourceShas": [
+          "962940681f0337bf9330385945887e8f60c4d108ada2b676678dafc80617de24"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_STATE_HANDLE",
+          "pointer": "/project"
+        }
+      ],
+      "targetId": "notes",
+      "title": {
+        "source": "click-help",
+        "text": "Interactive REPL"
+      }
+    },
+    "interactive": true,
+    "native_path": [
+      "repl"
+    ],
+    "native_signals": 0
+  }
+]

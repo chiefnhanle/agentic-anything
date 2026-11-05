@@ -1,0 +1,2129 @@
+---
+source: crates/aa-core/tests/compile_golden.rs
+expression: pretty(lock)
+---
+{
+  "capabilities": [
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify git",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify git",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify git",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify git",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--dry-run",
+              "pointer": "/dry_run",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--verbose",
+              "pointer": "/verbose",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--interactive",
+              "pointer": "/interactive",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--patch",
+              "pointer": "/patch",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--edit",
+              "pointer": "/edit",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--force",
+              "pointer": "/force",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--update",
+              "pointer": "/update",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--renormalize",
+              "pointer": "/renormalize",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--intent-to-add",
+              "pointer": "/intent_to_add",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--all",
+              "pointer": "/all",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ignore-removal",
+              "pointer": "/ignore_removal",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--refresh",
+              "pointer": "/refresh",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ignore-errors",
+              "pointer": "/ignore_errors",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ignore-missing",
+              "pointer": "/ignore_missing",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--sparse",
+              "pointer": "/sparse",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--chmod",
+              "pointer": "/chmod",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--pathspec-from-file",
+              "pointer": "/pathspec_from_file",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--pathspec-file-nul",
+              "pointer": "/pathspec_file_nul",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "pointer": "/pathspec",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "add"
+          ],
+          "cwdPointer": "/repo",
+          "deadlineMs": 15000,
+          "env": {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--no-optional-locks",
+            "-c",
+            "core.pager=cat",
+            "-c",
+            "color.ui=never"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "branches": [
+        {
+          "effects": {
+            "mayDiscardData": "TRI_TRUE"
+          },
+          "pointer": "/force",
+          "signals": [
+            {
+              "confidence": "CONFIDENCE_INFERRED",
+              "field": "may_discard_data",
+              "rationale": "--force may discard data",
+              "source": "rule:cli-options@1",
+              "value": "TRI_TRUE"
+            }
+          ]
+        }
+      ],
+      "capabilityDigest": "54b07cfaaddcbe57aa67a499c1426a6dea38ca307df52c24c4ac6dc5045b68f7",
+      "description": {
+        "source": "help-text:git add -h",
+        "text": "usage: git add [<options>] [--] <pathspec>...\n\n    -n, --[no-]dry-run    dry run\n    -v, --[no-]verbose    be verbose\n\n    -i, --[no-]interactive\n                          interactive picking\n    -p, --[no-]patch      select hunks interactively\n    -e, --[no-]edit       edit current diff and apply\n    -f, --[no-]force      allow adding otherwise ignored files\n    -u, --[no-]update     update tracked files\n    --[no-]renormalize    renormalize EOL of tracked files (implies -u)\n    -N, --[no-]intent-to-add\n                          record only the fact that the path will be added later\n    -A, --[no-]all        add changes from all tracked and untracked files\n    --[no-]ignore-removal ignore paths removed in the working tree (same as --no-all)\n    --[no-]refresh        don't add, only refresh the index\n    --[no-]ignore-errors  just skip files which cannot be added because of errors\n    --[no-]ignore-missing check if - even missing - files are ignored in dry run\n    --[no-]sparse         allow updating entries outside of the sparse-checkout cone\n    --[no-]chmod (+|-)x   override the executable bit of the listed files\n    --[no-]pathspec-from-file <file>\n                          read pathspec from file\n    --[no-]pathspec-file-nul\n                          with --pathspec-from-file, pathspec elements are separated with NUL character\n\n"
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_TRUE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "examples": [
+        {
+          "fixtureId": "repo-with-untracked",
+          "inputJson": "{\"pathspec\":[\"NEW.txt\"],\"repo\":{\"$root\":\"/repo\"}}",
+          "source": "overlay"
+        },
+        {
+          "fixtureId": "repo-with-untracked",
+          "inputJson": "{\"pathspec\":[\"docs/\"],\"repo\":{\"$root\":\"/repo\"}}",
+          "source": "overlay"
+        }
+      ],
+      "family": "add",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "git.add",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"all\":{\"type\":\"boolean\"},\"chmod\":{\"type\":\"string\"},\"dry_run\":{\"type\":\"boolean\"},\"edit\":{\"type\":\"boolean\"},\"force\":{\"type\":\"boolean\"},\"ignore_errors\":{\"type\":\"boolean\"},\"ignore_missing\":{\"type\":\"string\"},\"ignore_removal\":{\"type\":\"string\"},\"intent_to_add\":{\"type\":\"boolean\"},\"interactive\":{\"type\":\"boolean\"},\"patch\":{\"type\":\"boolean\"},\"pathspec\":{\"items\":{\"type\":\"string\"},\"minItems\":1,\"type\":\"array\"},\"pathspec_file_nul\":{\"type\":\"boolean\"},\"pathspec_from_file\":{\"type\":\"string\"},\"refresh\":{\"type\":\"boolean\"},\"renormalize\":{\"type\":\"boolean\"},\"repo\":{\"format\":\"path\",\"type\":\"string\"},\"sparse\":{\"type\":\"boolean\"},\"update\":{\"type\":\"boolean\"},\"verbose\":{\"type\":\"boolean\"}},\"required\":[\"pathspec\",\"repo\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "oracles": [
+        {
+          "readBack": {
+            "argsTemplateJson": "{\"repo\":{\"$input\":\"/repo\"}}",
+            "capabilityId": "git.status",
+            "predicates": [
+              {
+                "op": "PREDICATE_OP_CONTAINS",
+                "pointer": "/lines",
+                "valueJson": "{\"$input\":\"/pathspec/0\"}"
+              }
+            ]
+          }
+        }
+      ],
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "add",
+        "mcpName": "git_add"
+      },
+      "provenance": {
+        "nativeIds": [
+          "add"
+        ],
+        "sourceShas": [
+          "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_WRITE_PATH",
+          "pointer": "/repo"
+        }
+      ],
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "mutates_target",
+          "rationale": "leaf verb 'add'",
+          "source": "rule:cli-verbs@1",
+          "value": "TRI_TRUE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "git",
+      "title": {
+        "source": "harvest",
+        "text": "git add"
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "the native command mixes modes; it is served through the overlay mode splits git.branch.delete, git.branch.list",
+            "reason": "WITHHELD_REASON_MIXED_AUTHORITY"
+          },
+          {
+            "hint": "the usage block shows several modes of this command; split it by mode in target.aa.yaml (capabilities.<id>.binding.command_path + fixed_args)",
+            "reason": "WITHHELD_REASON_MIXED_AUTHORITY"
+          },
+          {
+            "evidenceIds": [
+              "vr_lane_static_git.branch_100"
+            ],
+            "hint": "unresolved mixed authority: the native command mixes modes; it is served through the overlay mode splits git.branch.delete, git.branch.list",
+            "reason": "WITHHELD_REASON_MIXED_AUTHORITY"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--verbose",
+              "pointer": "/verbose",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--quiet",
+              "pointer": "/quiet",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--track",
+              "pointer": "/track",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--set-upstream-to",
+              "pointer": "/set_upstream_to",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--unset-upstream",
+              "pointer": "/unset_upstream",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--color",
+              "pointer": "/color",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--remotes",
+              "pointer": "/remotes",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--contains",
+              "pointer": "/contains",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--no-contains",
+              "pointer": "/no_contains",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--abbrev",
+              "pointer": "/abbrev",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--all",
+              "pointer": "/all",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--delete",
+              "pointer": "/delete",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "-D",
+              "pointer": "/d",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--move",
+              "pointer": "/move",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "-M",
+              "pointer": "/m",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--omit-empty",
+              "pointer": "/omit_empty",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--copy",
+              "pointer": "/copy",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "-C",
+              "pointer": "/c",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--list",
+              "pointer": "/list",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--show-current",
+              "pointer": "/show_current",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--create-reflog",
+              "pointer": "/create_reflog",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--edit-description",
+              "pointer": "/edit_description",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--force",
+              "pointer": "/force",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--merged",
+              "pointer": "/merged",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--no-merged",
+              "pointer": "/no_merged",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--column",
+              "pointer": "/column",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--sort",
+              "pointer": "/sort",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--points-at",
+              "pointer": "/points_at",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--ignore-case",
+              "pointer": "/ignore_case",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--recurse-submodules",
+              "pointer": "/recurse_submodules",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--format",
+              "pointer": "/format",
+              "style": "ARG_STYLE_OPTION"
+            }
+          ],
+          "commandPath": [
+            "branch"
+          ],
+          "deadlineMs": 15000,
+          "env": {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--no-optional-locks",
+            "-c",
+            "core.pager=cat",
+            "-c",
+            "color.ui=never"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "branches": [
+        {
+          "effects": {
+            "mayDiscardData": "TRI_TRUE"
+          },
+          "pointer": "/d",
+          "signals": [
+            {
+              "confidence": "CONFIDENCE_INFERRED",
+              "field": "may_discard_data",
+              "rationale": "-D may discard data",
+              "source": "rule:cli-options@1",
+              "value": "TRI_TRUE"
+            }
+          ]
+        },
+        {
+          "effects": {
+            "mayDiscardData": "TRI_TRUE"
+          },
+          "pointer": "/force",
+          "signals": [
+            {
+              "confidence": "CONFIDENCE_INFERRED",
+              "field": "may_discard_data",
+              "rationale": "--force may discard data",
+              "source": "rule:cli-options@1",
+              "value": "TRI_TRUE"
+            }
+          ]
+        }
+      ],
+      "capabilityDigest": "b3aae6c6bf2932589b1dc63cf1ead33ccb5955ec7bd88c813ccc9be1bfd4a56d",
+      "description": {
+        "source": "help-text:git branch -h",
+        "text": "usage: git branch [<options>] [-r | -a] [--merged] [--no-merged]\n   or: git branch [<options>] [-f] [--recurse-submodules] <branch-name> [<start-point>]\n   or: git branch [<options>] [-l] [<pattern>...]\n   or: git branch [<options>] [-r] (-d | -D) <branch-name>...\n   or: git branch [<options>] (-m | -M) [<old-branch>] <new-branch>\n   or: git branch [<options>] (-c | -C) [<old-branch>] <new-branch>\n   or: git branch [<options>] [-r | -a] [--points-at]\n   or: git branch [<options>] [-r | -a] [--format]\n\nGeneric options\n    -v, --[no-]verbose    show hash and subject, give twice for upstream branch\n    -q, --[no-]quiet      suppress informational messages\n    -t, --[no-]track[=(direct|inherit)]\n                          set branch tracking configuration\n    -u, --[no-]set-upstream-to <upstream>\n                          change the upstream info\n    --[no-]unset-upstream unset the upstream info\n    --[no-]color[=<when>] use colored output\n    -r, --remotes         act on remote-tracking branches\n    --contains <commit>   print only branches that contain the commit\n    --no-contains <commit>\n                          print only branches that don't contain the commit\n    --[no-]abbrev[=<n>]   use <n> digits to display object names\n\nSpecific git-branch actions:\n    -a, --all             list both remote-tracking and local branches\n    -d, --[no-]delete     delete fully merged branch\n    -D                    delete branch (even if not merged)\n    -m, --[no-]move       move/rename a branch and its reflog\n    -M                    move/rename a branch, even if target exists\n    --[no-]omit-empty     do not output a newline after empty formatted refs\n    -c, --[no-]copy       copy a branch and its reflog\n    -C                    copy a branch, even if target exists\n    -l, --[no-]list       list branch names\n    --[no-]show-current   show current branch name\n    --[no-]create-reflog  create the branch's reflog\n    --[no-]edit-description\n                          edit the description for the branch\n    -f, --[no-]force      force creation, move/rename, deletion\n    --merged <commit>     print only branches that are merged\n    --no-merged <commit>  print only branches that are not merged\n    --[no-]column[=<style>]\n                          list branches in columns\n    --[no-]sort <key>     field name to sort on\n    --[no-]points-at <object>\n                          print only branches of the object\n    -i, --[no-]ignore-case\n                          sorting and filtering are case insensitive\n    --[no-]recurse-submodules\n                          recurse through submodules\n    --[no-]format <format>\n                          format to use for the output\n\n"
+      },
+      "effects": {
+        "accessesNetwork": "TRI_FALSE",
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "executesForeignCode": "TRI_FALSE",
+        "externalSideEffect": "TRI_FALSE",
+        "irreversible": "TRI_FALSE",
+        "launchesProcess": "TRI_FALSE",
+        "mayDiscardData": "TRI_FALSE",
+        "mutatesDevice": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsCredentials": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE",
+        "writesFilesystem": "TRI_FALSE"
+      },
+      "family": "branch",
+      "hints": {
+        "readOnly": true
+      },
+      "id": "git.branch",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"abbrev\":{\"type\":\"string\"},\"all\":{\"type\":\"boolean\"},\"c\":{\"type\":\"boolean\"},\"color\":{\"type\":\"string\"},\"column\":{\"type\":\"string\"},\"contains\":{\"type\":\"string\"},\"copy\":{\"type\":\"boolean\"},\"create_reflog\":{\"type\":\"boolean\"},\"d\":{\"type\":\"boolean\"},\"delete\":{\"type\":\"boolean\"},\"edit_description\":{\"type\":\"boolean\"},\"force\":{\"type\":\"boolean\"},\"format\":{\"type\":\"string\"},\"ignore_case\":{\"type\":\"boolean\"},\"list\":{\"type\":\"boolean\"},\"m\":{\"type\":\"boolean\"},\"merged\":{\"type\":\"string\"},\"move\":{\"type\":\"boolean\"},\"no_contains\":{\"type\":\"string\"},\"no_merged\":{\"type\":\"string\"},\"omit_empty\":{\"type\":\"boolean\"},\"points_at\":{\"type\":\"string\"},\"quiet\":{\"type\":\"boolean\"},\"recurse_submodules\":{\"type\":\"boolean\"},\"remotes\":{\"type\":\"boolean\"},\"set_upstream_to\":{\"type\":\"string\"},\"show_current\":{\"type\":\"boolean\"},\"sort\":{\"type\":\"string\"},\"track\":{\"type\":\"string\"},\"unset_upstream\":{\"type\":\"string\"},\"verbose\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "level": "EFFECT_LEVEL_READ",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "branch",
+        "mcpName": "git_branch"
+      },
+      "provenance": {
+        "nativeIds": [
+          "branch"
+        ],
+        "sourceShas": [
+          "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "accesses_network",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "executes_foreign_code",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "external_side_effect",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "irreversible",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "launches_process",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "may_discard_data",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_device",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_target",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "reads_credentials",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "writes_filesystem",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch_100",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "git",
+      "tier": "AUTHORITY_TIER_OBSERVE",
+      "title": {
+        "source": "harvest",
+        "text": "git branch"
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify git",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify git",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify git",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify git",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "branch"
+          ],
+          "cwdPointer": "/repo",
+          "deadlineMs": 15000,
+          "env": {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "fixedArgs": [
+            "--delete"
+          ],
+          "globalArgs": [
+            "--no-optional-locks",
+            "-c",
+            "core.pager=cat",
+            "-c",
+            "color.ui=never"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "branches": [
+        {
+          "effects": {
+            "irreversible": "TRI_TRUE"
+          },
+          "pointer": "/force",
+          "signals": [
+            {
+              "confidence": "CONFIDENCE_INFERRED",
+              "field": "irreversible",
+              "rationale": "overlay branch raise",
+              "source": "overlay:branches",
+              "value": "TRI_TRUE"
+            }
+          ]
+        }
+      ],
+      "capabilityDigest": "291d63ab8f37c43fd31a012973fac0bc516e01363582d2e3bea57b8e750dd1be",
+      "description": {
+        "source": "help-text:git branch -h",
+        "text": "usage: git branch [<options>] [-r | -a] [--merged] [--no-merged]\n   or: git branch [<options>] [-f] [--recurse-submodules] <branch-name> [<start-point>]\n   or: git branch [<options>] [-l] [<pattern>...]\n   or: git branch [<options>] [-r] (-d | -D) <branch-name>...\n   or: git branch [<options>] (-m | -M) [<old-branch>] <new-branch>\n   or: git branch [<options>] (-c | -C) [<old-branch>] <new-branch>\n   or: git branch [<options>] [-r | -a] [--points-at]\n   or: git branch [<options>] [-r | -a] [--format]\n\nGeneric options\n    -v, --[no-]verbose    show hash and subject, give twice for upstream branch\n    -q, --[no-]quiet      suppress informational messages\n    -t, --[no-]track[=(direct|inherit)]\n                          set branch tracking configuration\n    -u, --[no-]set-upstream-to <upstream>\n                          change the upstream info\n    --[no-]unset-upstream unset the upstream info\n    --[no-]color[=<when>] use colored output\n    -r, --remotes         act on remote-tracking branches\n    --contains <commit>   print only branches that contain the commit\n    --no-contains <commit>\n                          print only branches that don't contain the commit\n    --[no-]abbrev[=<n>]   use <n> digits to display object names\n\nSpecific git-branch actions:\n    -a, --all             list both remote-tracking and local branches\n    -d, --[no-]delete     delete fully merged branch\n    -D                    delete branch (even if not merged)\n    -m, --[no-]move       move/rename a branch and its reflog\n    -M                    move/rename a branch, even if target exists\n    --[no-]omit-empty     do not output a newline after empty formatted refs\n    -c, --[no-]copy       copy a branch and its reflog\n    -C                    copy a branch, even if target exists\n    -l, --[no-]list       list branch names\n    --[no-]show-current   show current branch name\n    --[no-]create-reflog  create the branch's reflog\n    --[no-]edit-description\n                          edit the description for the branch\n    -f, --[no-]force      force creation, move/rename, deletion\n    --merged <commit>     print only branches that are merged\n    --no-merged <commit>  print only branches that are not merged\n    --[no-]column[=<style>]\n                          list branches in columns\n    --[no-]sort <key>     field name to sort on\n    --[no-]points-at <object>\n                          print only branches of the object\n    -i, --[no-]ignore-case\n                          sorting and filtering are case insensitive\n    --[no-]recurse-submodules\n                          recurse through submodules\n    --[no-]format <format>\n                          format to use for the output\n\n"
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mayDiscardData": "TRI_TRUE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "branch",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "git.branch.delete",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"repo\":{\"format\":\"path\",\"type\":\"string\"}},\"required\":[\"repo\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "oracles": [
+        {
+          "negative": {
+            "argsTemplateJson": "{\"repo\":{\"$input\":\"/repo\"}}",
+            "bogusInputJson": "{\"name\":\"aa-no-such-branch\",\"repo\":{\"$root\":\"/repo\"}}",
+            "capabilityId": "git.branch.list",
+            "predicates": [
+              {
+                "op": "PREDICATE_OP_ABSENT",
+                "pointer": "/lines",
+                "valueJson": "{\"$input\":\"/name\"}"
+              }
+            ]
+          }
+        }
+      ],
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "branch",
+        "mcpName": "git_branch_delete"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "binding": "CONFIDENCE_OPERATOR"
+        },
+        "sourceShas": [
+          "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_WRITE_PATH",
+          "pointer": "/repo"
+        }
+      ],
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "may_discard_data",
+          "rationale": "leaf verb 'delete'",
+          "source": "rule:cli-verbs@1",
+          "value": "TRI_TRUE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "git",
+      "title": {
+        "source": "harvest",
+        "text": "git branch"
+      }
+    },
+    {
+      "admission": {
+        "requiredRuntimeIsolation": "ISOLATION_CONFINED",
+        "state": "ADMISSION_STATE_SERVABLE",
+        "verificationRecordIds": [
+          "vr_lane_parser_git.branch.list_100",
+          "vr_lane_sandbox_diff_git.branch.list_100",
+          "vr_lane_static_git.branch.list_100"
+        ]
+      },
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "branch"
+          ],
+          "cwdPointer": "/repo",
+          "deadlineMs": 15000,
+          "env": {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "fixedArgs": [
+            "--list",
+            "--format=%(refname:short)"
+          ],
+          "globalArgs": [
+            "--no-optional-locks",
+            "-c",
+            "core.pager=cat",
+            "-c",
+            "color.ui=never"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "capabilityDigest": "5eee7d2b9a2f31e24ddaaa8fd9078c78ffe9ab7df9d4659a745fcffe13e5464b",
+      "description": {
+        "source": "help-text:git branch -h",
+        "text": "usage: git branch [<options>] [-r | -a] [--merged] [--no-merged]\n   or: git branch [<options>] [-f] [--recurse-submodules] <branch-name> [<start-point>]\n   or: git branch [<options>] [-l] [<pattern>...]\n   or: git branch [<options>] [-r] (-d | -D) <branch-name>...\n   or: git branch [<options>] (-m | -M) [<old-branch>] <new-branch>\n   or: git branch [<options>] (-c | -C) [<old-branch>] <new-branch>\n   or: git branch [<options>] [-r | -a] [--points-at]\n   or: git branch [<options>] [-r | -a] [--format]\n\nGeneric options\n    -v, --[no-]verbose    show hash and subject, give twice for upstream branch\n    -q, --[no-]quiet      suppress informational messages\n    -t, --[no-]track[=(direct|inherit)]\n                          set branch tracking configuration\n    -u, --[no-]set-upstream-to <upstream>\n                          change the upstream info\n    --[no-]unset-upstream unset the upstream info\n    --[no-]color[=<when>] use colored output\n    -r, --remotes         act on remote-tracking branches\n    --contains <commit>   print only branches that contain the commit\n    --no-contains <commit>\n                          print only branches that don't contain the commit\n    --[no-]abbrev[=<n>]   use <n> digits to display object names\n\nSpecific git-branch actions:\n    -a, --all             list both remote-tracking and local branches\n    -d, --[no-]delete     delete fully merged branch\n    -D                    delete branch (even if not merged)\n    -m, --[no-]move       move/rename a branch and its reflog\n    -M                    move/rename a branch, even if target exists\n    --[no-]omit-empty     do not output a newline after empty formatted refs\n    -c, --[no-]copy       copy a branch and its reflog\n    -C                    copy a branch, even if target exists\n    -l, --[no-]list       list branch names\n    --[no-]show-current   show current branch name\n    --[no-]create-reflog  create the branch's reflog\n    --[no-]edit-description\n                          edit the description for the branch\n    -f, --[no-]force      force creation, move/rename, deletion\n    --merged <commit>     print only branches that are merged\n    --no-merged <commit>  print only branches that are not merged\n    --[no-]column[=<style>]\n                          list branches in columns\n    --[no-]sort <key>     field name to sort on\n    --[no-]points-at <object>\n                          print only branches of the object\n    -i, --[no-]ignore-case\n                          sorting and filtering are case insensitive\n    --[no-]recurse-submodules\n                          recurse through submodules\n    --[no-]format <format>\n                          format to use for the output\n\n"
+      },
+      "effects": {
+        "accessesNetwork": "TRI_FALSE",
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "executesForeignCode": "TRI_FALSE",
+        "externalSideEffect": "TRI_FALSE",
+        "irreversible": "TRI_FALSE",
+        "launchesProcess": "TRI_FALSE",
+        "mayDiscardData": "TRI_FALSE",
+        "mutatesDevice": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsCredentials": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE",
+        "writesFilesystem": "TRI_FALSE"
+      },
+      "family": "branch",
+      "hints": {
+        "readOnly": true
+      },
+      "id": "git.branch.list",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"repo\":{\"format\":\"path\",\"type\":\"string\"}},\"required\":[\"repo\"],\"type\":\"object\"}",
+      "level": "EFFECT_LEVEL_READ",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "branch",
+        "mcpName": "git_branch_list"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "binding": "CONFIDENCE_OPERATOR"
+        },
+        "sourceShas": [
+          "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_READ_PATH",
+          "pointer": "/repo"
+        }
+      ],
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "accesses_network",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "executes_foreign_code",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "external_side_effect",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "irreversible",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "launches_process",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "may_discard_data",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_device",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_target",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "reads_credentials",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "writes_filesystem",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.branch.list_100",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "git",
+      "tier": "AUTHORITY_TIER_OBSERVE",
+      "title": {
+        "source": "harvest",
+        "text": "git branch"
+      }
+    },
+    {
+      "admission": {
+        "requiredRuntimeIsolation": "ISOLATION_CONFINED",
+        "state": "ADMISSION_STATE_SERVABLE",
+        "verificationRecordIds": [
+          "vr_lane_parser_git.log_100",
+          "vr_lane_sandbox_diff_git.log_100",
+          "vr_lane_static_git.log_100"
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--quiet",
+              "pointer": "/quiet",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--source",
+              "pointer": "/source",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--use-mailmap",
+              "pointer": "/use_mailmap",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--mailmap",
+              "pointer": "/mailmap",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--clear-decorations",
+              "pointer": "/clear_decorations",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--decorate-refs",
+              "pointer": "/decorate_refs",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--decorate-refs-exclude",
+              "pointer": "/decorate_refs_exclude",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--decorate",
+              "pointer": "/decorate",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "-L",
+              "pointer": "/l",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "pointer": "/revision_range",
+              "style": "ARG_STYLE_POSITIONAL"
+            },
+            {
+              "pointer": "/path",
+              "position": 1,
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "log"
+          ],
+          "cwdPointer": "/repo",
+          "deadlineMs": 15000,
+          "env": {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "fixedArgs": [
+            "--format=%H%x09%an%x09%aI%x09%s"
+          ],
+          "globalArgs": [
+            "--no-optional-locks",
+            "-c",
+            "core.pager=cat",
+            "-c",
+            "color.ui=never"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "capabilityDigest": "6d17453969c3c00245fcc011be5abf27f5b0076219ceb3fa0ffb3ac38b56b33f",
+      "core": true,
+      "description": {
+        "source": "help-text:git log -h",
+        "text": "usage: git log [<options>] [<revision-range>] [[--] <path>...]\n   or: git show [<options>] <object>...\n\n    -q, --[no-]quiet      suppress diff output\n    --[no-]source         show source\n    --[no-]use-mailmap    use mail map file\n    --[no-]mailmap        alias of --use-mailmap\n    --clear-decorations   clear all previously-defined decoration filters\n    --[no-]decorate-refs <pattern>\n                          only decorate refs that match <pattern>\n    --[no-]decorate-refs-exclude <pattern>\n                          do not decorate refs that match <pattern>\n    --[no-]decorate[=...] decorate options\n    -L <range:file>       trace the evolution of line range <start>,<end> or function :<funcname> in <file>\n\n"
+      },
+      "effects": {
+        "accessesNetwork": "TRI_FALSE",
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "executesForeignCode": "TRI_FALSE",
+        "externalSideEffect": "TRI_FALSE",
+        "irreversible": "TRI_FALSE",
+        "launchesProcess": "TRI_FALSE",
+        "mayDiscardData": "TRI_FALSE",
+        "mutatesDevice": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsCredentials": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE",
+        "writesFilesystem": "TRI_FALSE"
+      },
+      "examples": [
+        {
+          "fixtureId": "one-commit-repo",
+          "inputJson": "{\"max_count\":5,\"repo\":{\"$root\":\"/repo\"}}",
+          "source": "overlay"
+        },
+        {
+          "fixtureId": "one-commit-repo",
+          "inputJson": "{\"author\":\"aa\",\"max_count\":1,\"repo\":{\"$root\":\"/repo\"}}",
+          "source": "overlay"
+        }
+      ],
+      "family": "log",
+      "hints": {
+        "readOnly": true
+      },
+      "id": "git.log",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"clear_decorations\":{\"type\":\"boolean\"},\"decorate\":{\"type\":\"string\"},\"decorate_refs\":{\"type\":\"string\"},\"decorate_refs_exclude\":{\"type\":\"string\"},\"l\":{\"type\":\"string\"},\"mailmap\":{\"type\":\"boolean\"},\"path\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"quiet\":{\"type\":\"boolean\"},\"repo\":{\"format\":\"path\",\"type\":\"string\"},\"revision_range\":{\"type\":\"string\"},\"source\":{\"type\":\"boolean\"},\"use_mailmap\":{\"type\":\"boolean\"}},\"required\":[\"repo\"],\"type\":\"object\"}",
+      "level": "EFFECT_LEVEL_READ",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "log",
+        "mcpName": "git_log"
+      },
+      "provenance": {
+        "nativeIds": [
+          "log"
+        ],
+        "sourceShas": [
+          "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_READ_PATH",
+          "pointer": "/repo"
+        }
+      ],
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "accesses_network",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "executes_foreign_code",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "external_side_effect",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "irreversible",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "launches_process",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "may_discard_data",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_device",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_target",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "reads_credentials",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "writes_filesystem",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.log_100",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "git",
+      "tier": "AUTHORITY_TIER_OBSERVE",
+      "title": {
+        "source": "harvest",
+        "text": "git log"
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "the usage block shows several modes of this command; split it by mode in target.aa.yaml (capabilities.<id>.binding.command_path + fixed_args)",
+            "reason": "WITHHELD_REASON_MIXED_AUTHORITY"
+          },
+          {
+            "evidenceIds": [
+              "vr_lane_static_git.rev-parse_100"
+            ],
+            "hint": "unresolved mixed authority: the usage block shows several modes of this command; split it by mode in target.aa.yaml (capabilities.<id>.binding.command_path + fixed_args)",
+            "reason": "WITHHELD_REASON_MIXED_AUTHORITY"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "pointer": "/args",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "rev-parse"
+          ],
+          "deadlineMs": 15000,
+          "env": {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "globalArgs": [
+            "--no-optional-locks",
+            "-c",
+            "core.pager=cat",
+            "-c",
+            "color.ui=never"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "capabilityDigest": "dc7aaa73472bed9a470b572a3e0cd81597b3382b4b0afc345b96eb41bf9f109e",
+      "description": {
+        "source": "help-text:git rev-parse -h",
+        "text": "usage: git rev-parse --parseopt [<options>] -- [<args>...]\n   or: git rev-parse --sq-quote [<arg>...]\n   or: git rev-parse [<options>] [<arg>...]\n\nRun \"git rev-parse --parseopt -h\" for more information on the first usage.\n"
+      },
+      "effects": {
+        "accessesNetwork": "TRI_FALSE",
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "executesForeignCode": "TRI_FALSE",
+        "externalSideEffect": "TRI_FALSE",
+        "irreversible": "TRI_FALSE",
+        "launchesProcess": "TRI_FALSE",
+        "mayDiscardData": "TRI_FALSE",
+        "mutatesDevice": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsCredentials": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE",
+        "writesFilesystem": "TRI_FALSE"
+      },
+      "family": "rev-parse",
+      "hints": {
+        "readOnly": true
+      },
+      "id": "git.rev-parse",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"args\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"}",
+      "level": "EFFECT_LEVEL_READ",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "rev-parse",
+        "mcpName": "git_rev-parse"
+      },
+      "provenance": {
+        "nativeIds": [
+          "rev-parse"
+        ],
+        "sourceShas": [
+          "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "accesses_network",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "executes_foreign_code",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "external_side_effect",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "irreversible",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "launches_process",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "may_discard_data",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_device",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_target",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "reads_credentials",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "writes_filesystem",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.rev-parse_100",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "git",
+      "tier": "AUTHORITY_TIER_OBSERVE",
+      "title": {
+        "source": "harvest",
+        "text": "git rev-parse"
+      }
+    },
+    {
+      "admission": {
+        "requiredRuntimeIsolation": "ISOLATION_CONFINED",
+        "state": "ADMISSION_STATE_SERVABLE",
+        "verificationRecordIds": [
+          "vr_lane_parser_git.status_100",
+          "vr_lane_sandbox_diff_git.status_100",
+          "vr_lane_static_git.status_100"
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--verbose",
+              "pointer": "/verbose",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--short",
+              "pointer": "/short",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--branch",
+              "pointer": "/branch",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--show-stash",
+              "pointer": "/show_stash",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ahead-behind",
+              "pointer": "/ahead_behind",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--porcelain",
+              "pointer": "/porcelain",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--long",
+              "pointer": "/long",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--null",
+              "pointer": "/null",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--untracked-files",
+              "pointer": "/untracked_files",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--ignored",
+              "pointer": "/ignored",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--ignore-submodules",
+              "pointer": "/ignore_submodules",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--column",
+              "pointer": "/column",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--no-renames",
+              "pointer": "/no_renames",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--renames",
+              "pointer": "/renames",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--find-renames",
+              "pointer": "/find_renames",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "pointer": "/pathspec",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "status"
+          ],
+          "cwdPointer": "/repo",
+          "deadlineMs": 15000,
+          "env": {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "fixedArgs": [
+            "--porcelain=v2",
+            "--branch"
+          ],
+          "globalArgs": [
+            "--no-optional-locks",
+            "-c",
+            "core.pager=cat",
+            "-c",
+            "color.ui=never"
+          ],
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "capabilityDigest": "4c464491b250cd12d4d7356c923d8f3676bc459a9c6e6fdb71b580f1c10cef7b",
+      "core": true,
+      "description": {
+        "source": "help-text:git status -h",
+        "text": "usage: git status [<options>] [--] [<pathspec>...]\n\n    -v, --[no-]verbose    be verbose\n    -s, --[no-]short      show status concisely\n    -b, --[no-]branch     show branch information\n    --[no-]show-stash     show stash information\n    --[no-]ahead-behind   compute full ahead/behind values\n    --[no-]porcelain[=<version>]\n                          machine-readable output\n    --[no-]long           show status in long format (default)\n    -z, --[no-]null       terminate entries with NUL\n    -u, --[no-]untracked-files[=<mode>]\n                          show untracked files, optional modes: all, normal, no. (Default: all)\n    --[no-]ignored[=<mode>]\n                          show ignored files, optional modes: traditional, matching, no. (Default: traditional)\n    --[no-]ignore-submodules[=<when>]\n                          ignore changes to submodules, optional when: all, dirty, untracked. (Default: all)\n    --[no-]column[=<style>]\n                          list untracked files in columns\n    --no-renames          do not detect renames\n    --renames             opposite of --no-renames\n    -M, --find-renames[=<n>]\n                          detect renames, optionally set similarity index\n\n"
+      },
+      "effects": {
+        "accessesNetwork": "TRI_FALSE",
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "executesForeignCode": "TRI_FALSE",
+        "externalSideEffect": "TRI_FALSE",
+        "irreversible": "TRI_FALSE",
+        "launchesProcess": "TRI_FALSE",
+        "mayDiscardData": "TRI_FALSE",
+        "mutatesDevice": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsCredentials": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE",
+        "writesFilesystem": "TRI_FALSE"
+      },
+      "examples": [
+        {
+          "fixtureId": "one-commit-repo",
+          "inputJson": "{\"repo\":{\"$root\":\"/repo\"}}",
+          "source": "overlay"
+        },
+        {
+          "fixtureId": "one-commit-repo",
+          "inputJson": "{\"repo\":{\"$root\":\"/repo\"},\"untracked_files\":\"no\"}",
+          "source": "overlay"
+        }
+      ],
+      "family": "status",
+      "hints": {
+        "readOnly": true
+      },
+      "id": "git.status",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"ahead_behind\":{\"type\":\"boolean\"},\"branch\":{\"type\":\"boolean\"},\"column\":{\"type\":\"string\"},\"find_renames\":{\"type\":\"string\"},\"ignore_submodules\":{\"enum\":[\"all\",\"dirty\",\"untracked\"]},\"ignored\":{\"enum\":[\"traditional\",\"matching\",\"no\"]},\"long\":{\"type\":\"boolean\"},\"no_renames\":{\"type\":\"boolean\"},\"null\":{\"type\":\"boolean\"},\"pathspec\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"porcelain\":{\"type\":\"string\"},\"renames\":{\"type\":\"boolean\"},\"repo\":{\"format\":\"path\",\"type\":\"string\"},\"short\":{\"type\":\"boolean\"},\"show_stash\":{\"type\":\"boolean\"},\"untracked_files\":{\"enum\":[\"all\",\"normal\",\"no\"]},\"verbose\":{\"type\":\"boolean\"}},\"required\":[\"repo\"],\"type\":\"object\"}",
+      "level": "EFFECT_LEVEL_READ",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "status",
+        "mcpName": "git_status"
+      },
+      "provenance": {
+        "nativeIds": [
+          "status"
+        ],
+        "sourceShas": [
+          "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc"
+        ]
+      },
+      "returnsTargetContent": true,
+      "scopes": [
+        {
+          "kind": "SCOPE_KIND_READ_PATH",
+          "pointer": "/repo"
+        }
+      ],
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "accesses_network",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "executes_foreign_code",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "external_side_effect",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "irreversible",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "launches_process",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "may_discard_data",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_device",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "mutates_target",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "reads_credentials",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_OBSERVED",
+          "field": "writes_filesystem",
+          "isolation": "ISOLATION_CONFINED",
+          "rationale": "L3 passed at ISOLATION_CONFINED with no observed change; lowering table (ADR 0011)",
+          "source": "verify:vr_lane_sandbox_diff_git.status_100",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "git",
+      "tier": "AUTHORITY_TIER_OBSERVE",
+      "title": {
+        "source": "harvest",
+        "text": "git status"
+      }
+    }
+  ],
+  "lockDigest": "ae2c48c589880f0ad555dc3c395cb81d5e3babc7b045eb29a9b7c5896628994f",
+  "overlaySha256": "b00944b445b828c1193de73aedcdd52ca6cf5b92cd3230b2830fba441ce2e2b0",
+  "ruleVersions": {
+    "cli-anything": "1",
+    "cli-options": "1",
+    "cli-verbs": "1",
+    "compile": "1",
+    "exclusions": "1",
+    "help-text": "1"
+  },
+  "schema": "aa.lock/v1",
+  "target": {
+    "authorizationStatement": "test",
+    "displayName": "Git",
+    "families": [
+      "add",
+      "branch",
+      "log",
+      "rev-parse",
+      "status"
+    ],
+    "fixtures": [
+      {
+        "id": "one-commit-repo",
+        "readyCapabilityId": "git.status",
+        "steps": [
+          {
+            "argv": {
+              "argv": [
+                "git",
+                "init",
+                "-q",
+                "repo"
+              ]
+            }
+          },
+          {
+            "file": {
+              "content": "aGVsbG8K",
+              "path": "repo/README"
+            }
+          },
+          {
+            "argv": {
+              "argv": [
+                "git",
+                "-C",
+                "repo",
+                "add",
+                "README"
+              ]
+            }
+          },
+          {
+            "argv": {
+              "argv": [
+                "git",
+                "-C",
+                "repo",
+                "-c",
+                "user.name=aa",
+                "-c",
+                "user.email=aa@localhost",
+                "commit",
+                "-qm",
+                "init"
+              ]
+            }
+          },
+          {
+            "argv": {
+              "argv": [
+                "git",
+                "-C",
+                "repo",
+                "branch",
+                "feature-x"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "repo-with-untracked",
+        "readyCapabilityId": "git.status",
+        "steps": [
+          {
+            "includeFixture": "one-commit-repo"
+          },
+          {
+            "file": {
+              "content": "bmV3Cg==",
+              "path": "repo/NEW.txt"
+            }
+          },
+          {
+            "file": {
+              "content": "YQo=",
+              "path": "repo/docs/a.md"
+            }
+          }
+        ]
+      }
+    ],
+    "id": "git",
+    "identity": {
+      "files": [
+        {
+          "realpath": "/opt/homebrew/Cellar/git/2.48.1/bin/git",
+          "role": "executable",
+          "sha256": "00cf617bdb56766bdd1528095279ed7dec77381320d68288b5e5d7b8fd4b9823"
+        }
+      ],
+      "identityDigest": "9678eb80bd170474e10f8f3de753a9d74ce72089868b3aae71f03235bcc48e31"
+    },
+    "kind": "TARGET_KIND_CLI_TOOL",
+    "mcpPrefix": "git",
+    "sources": [
+      {
+        "actionId": "act_01TESTHARVEST",
+        "authority": "DISCOVERY_AUTHORITY_INTROSPECT",
+        "harvestedAt": "2026-11-05T22:10:04+00:00",
+        "harvester": "help-text@1",
+        "sha256": "f4e373ddd2b224ca848e006c3aa226f78eaaaf6ff8f295d9ebbde86c55ac67bc",
+        "uri": "argv:git {status,log,branch,add,rev-parse} -h"
+      }
+    ],
+    "status": "TARGET_STATUS_LIVE_VERIFIED"
+  }
+}

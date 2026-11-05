@@ -1,0 +1,265 @@
+---
+source: crates/aa-harvest/tests/replay.rs
+expression: snap
+---
+[
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--all",
+              "pointer": "/all",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "pointer": "/alias",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "alias",
+            "delete"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "description": {
+        "source": "cobra-complete:gh alias delete",
+        "text": "Delete set aliases"
+      },
+      "family": "alias",
+      "id": "gh.alias.delete",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"alias\":{\"type\":\"string\"},\"all\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "alias delete"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "alias delete"
+        ],
+        "sourceShas": [
+          "3a11c51ac8ed937c41a8e5eb004f9438ad9021189a3c2113a05e72b562544761"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "gh",
+      "title": {
+        "source": "cobra-complete",
+        "text": "Delete set aliases"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "alias",
+      "delete"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--clobber",
+              "pointer": "/clobber",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "pointer": "/filename",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "alias",
+            "import"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "description": {
+        "source": "cobra-complete:gh alias import",
+        "text": "Import aliases from a YAML file"
+      },
+      "family": "alias",
+      "id": "gh.alias.import",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"clobber\":{\"type\":\"boolean\"},\"filename\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "alias import"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "alias import"
+        ],
+        "sourceShas": [
+          "3a11c51ac8ed937c41a8e5eb004f9438ad9021189a3c2113a05e72b562544761"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "gh",
+      "title": {
+        "source": "cobra-complete",
+        "text": "Import aliases from a YAML file"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "alias",
+      "import"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "alias",
+            "list"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "description": {
+        "source": "cobra-complete:gh alias list",
+        "text": "List your aliases"
+      },
+      "family": "alias",
+      "id": "gh.alias.list",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "alias list"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "alias list"
+        ],
+        "sourceShas": [
+          "3a11c51ac8ed937c41a8e5eb004f9438ad9021189a3c2113a05e72b562544761"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "gh",
+      "title": {
+        "source": "cobra-complete",
+        "text": "List your aliases"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "alias",
+      "list"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--clobber",
+              "pointer": "/clobber",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--shell",
+              "pointer": "/shell",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "pointer": "/alias",
+              "style": "ARG_STYLE_POSITIONAL"
+            },
+            {
+              "pointer": "/expansion",
+              "position": 1,
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "alias",
+            "set"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "description": {
+        "source": "cobra-complete:gh alias set",
+        "text": "Create a shortcut for a gh command"
+      },
+      "family": "alias",
+      "id": "gh.alias.set",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"alias\":{\"type\":\"string\"},\"clobber\":{\"type\":\"boolean\"},\"expansion\":{\"type\":\"string\"},\"shell\":{\"type\":\"boolean\"}},\"required\":[\"alias\",\"expansion\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "alias set"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "alias set"
+        ],
+        "sourceShas": [
+          "3a11c51ac8ed937c41a8e5eb004f9438ad9021189a3c2113a05e72b562544761"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "gh",
+      "title": {
+        "source": "cobra-complete",
+        "text": "Create a shortcut for a gh command"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "alias",
+      "set"
+    ],
+    "native_signals": 0
+  }
+]

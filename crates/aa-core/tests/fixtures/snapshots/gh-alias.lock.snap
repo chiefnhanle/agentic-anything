@@ -1,0 +1,685 @@
+---
+source: crates/aa-core/tests/compile_golden.rs
+expression: pretty(lock)
+---
+{
+  "capabilities": [
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify gh",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--all",
+              "pointer": "/all",
+              "style": "ARG_STYLE_FLAG"
+            }
+          ],
+          "commandPath": [
+            "alias",
+            "delete"
+          ],
+          "deadlineMs": 15000,
+          "env": {
+            "GH_CONFIG_DIR": "{root}/home/.config/gh",
+            "GH_PROMPT_DISABLED": "1",
+            "NO_COLOR": "1"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "capabilityDigest": "356b988c64f375be8242876b231b76c32cac3452e5cbc7aec56ee7a224d48a75",
+      "description": {
+        "source": "cobra-complete",
+        "text": "Delete set aliases"
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mayDiscardData": "TRI_TRUE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "alias",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "gh.alias.delete",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"all\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "alias delete",
+        "mcpName": "gh_alias_delete"
+      },
+      "provenance": {
+        "nativeIds": [
+          "alias delete"
+        ],
+        "sourceShas": [
+          "69371622cbf7e1ec83c5ef2abc28aaee06e6c9e57b6382aa435cfcb337f11b50"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "may_discard_data",
+          "rationale": "leaf verb 'delete'",
+          "source": "rule:cli-verbs@1",
+          "value": "TRI_TRUE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "gh",
+      "title": {
+        "source": "harvest",
+        "text": "Delete set aliases"
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify gh",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--clobber",
+              "pointer": "/clobber",
+              "style": "ARG_STYLE_FLAG"
+            }
+          ],
+          "commandPath": [
+            "alias",
+            "import"
+          ],
+          "deadlineMs": 15000,
+          "env": {
+            "GH_CONFIG_DIR": "{root}/home/.config/gh",
+            "GH_PROMPT_DISABLED": "1",
+            "NO_COLOR": "1"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "branches": [
+        {
+          "effects": {
+            "mayDiscardData": "TRI_TRUE"
+          },
+          "pointer": "/clobber",
+          "signals": [
+            {
+              "confidence": "CONFIDENCE_INFERRED",
+              "field": "may_discard_data",
+              "rationale": "--clobber may discard data",
+              "source": "rule:cli-options@1",
+              "value": "TRI_TRUE"
+            }
+          ]
+        }
+      ],
+      "capabilityDigest": "487b6efab9854b28fb14ba515232671d66566cb1a348d8bfb1d75c8084b09eec",
+      "description": {
+        "source": "cobra-complete",
+        "text": "Import aliases from a YAML file"
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_TRUE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "alias",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "gh.alias.import",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"clobber\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "alias import",
+        "mcpName": "gh_alias_import"
+      },
+      "provenance": {
+        "nativeIds": [
+          "alias import"
+        ],
+        "sourceShas": [
+          "69371622cbf7e1ec83c5ef2abc28aaee06e6c9e57b6382aa435cfcb337f11b50"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "mutates_target",
+          "rationale": "leaf verb 'import'",
+          "source": "rule:cli-verbs@1",
+          "value": "TRI_TRUE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "gh",
+      "title": {
+        "source": "harvest",
+        "text": "Import aliases from a YAML file"
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: mutates_target, writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; likely READ ('list'); lanes or an operator assumption must decide them: aa verify gh",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "commandPath": [
+            "alias",
+            "list"
+          ],
+          "deadlineMs": 15000,
+          "env": {
+            "GH_CONFIG_DIR": "{root}/home/.config/gh",
+            "GH_PROMPT_DISABLED": "1",
+            "NO_COLOR": "1"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "capabilityDigest": "bf8a0efdeabb180bd5ad3bff4e2a5e5b67162926543fbf333ebd5450f2c1b140",
+      "core": true,
+      "description": {
+        "source": "cobra-complete",
+        "text": "List your aliases"
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "examples": [
+        {
+          "inputJson": "{}",
+          "source": "overlay"
+        },
+        {
+          "inputJson": "{}",
+          "source": "overlay"
+        }
+      ],
+      "family": "alias",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "gh.alias.list",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "alias list",
+        "mcpName": "gh_alias_list"
+      },
+      "provenance": {
+        "nativeIds": [
+          "alias list"
+        ],
+        "sourceShas": [
+          "69371622cbf7e1ec83c5ef2abc28aaee06e6c9e57b6382aa435cfcb337f11b50"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "gh",
+      "title": {
+        "source": "harvest",
+        "text": "List your aliases"
+      }
+    },
+    {
+      "admission": {
+        "withheld": [
+          {
+            "hint": "no PASSED L0 static record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L1 parser record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "no PASSED L3 sandbox-diff record for the current capability digest: aa verify gh",
+            "reason": "WITHHELD_REASON_NOT_VERIFIED"
+          },
+          {
+            "hint": "undecided: writes_filesystem, launches_process, accesses_network, may_discard_data, executes_foreign_code, mutates_device, external_side_effect, reads_credentials, irreversible; lanes or an operator assumption must decide them: aa verify gh",
+            "reason": "WITHHELD_REASON_EFFECTS_UNKNOWN"
+          }
+        ]
+      },
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--clobber",
+              "pointer": "/clobber",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--shell",
+              "pointer": "/shell",
+              "style": "ARG_STYLE_FLAG"
+            }
+          ],
+          "commandPath": [
+            "alias",
+            "set"
+          ],
+          "deadlineMs": 15000,
+          "env": {
+            "GH_CONFIG_DIR": "{root}/home/.config/gh",
+            "GH_PROMPT_DISABLED": "1",
+            "NO_COLOR": "1"
+          },
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 1,
+          "usageStderrMarker": "unknown flag"
+        }
+      },
+      "branches": [
+        {
+          "effects": {
+            "mayDiscardData": "TRI_TRUE"
+          },
+          "pointer": "/clobber",
+          "signals": [
+            {
+              "confidence": "CONFIDENCE_INFERRED",
+              "field": "may_discard_data",
+              "rationale": "--clobber may discard data",
+              "source": "rule:cli-options@1",
+              "value": "TRI_TRUE"
+            }
+          ]
+        }
+      ],
+      "capabilityDigest": "c279db78abb4b66a903c3e2c8e12a68e9bae8c173df04aa002321e89307d524a",
+      "description": {
+        "source": "cobra-complete",
+        "text": "Create a shortcut for a gh command"
+      },
+      "effects": {
+        "attachesProcess": "TRI_FALSE",
+        "changesUiState": "TRI_FALSE",
+        "mutatesSession": "TRI_FALSE",
+        "mutatesTarget": "TRI_TRUE",
+        "readsClipboard": "TRI_FALSE",
+        "readsScreen": "TRI_FALSE",
+        "sendsInput": "TRI_FALSE",
+        "writesClipboard": "TRI_FALSE"
+      },
+      "family": "alias",
+      "hints": {
+        "destructive": true,
+        "openWorld": true
+      },
+      "id": "gh.alias.set",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"clobber\":{\"type\":\"boolean\"},\"shell\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "outputSchemaJson": "{\"properties\":{\"lines\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"text\":{\"type\":\"string\"}},\"type\":\"object\"}",
+      "projections": {
+        "cliPath": "alias set",
+        "mcpName": "gh_alias_set"
+      },
+      "provenance": {
+        "nativeIds": [
+          "alias set"
+        ],
+        "sourceShas": [
+          "69371622cbf7e1ec83c5ef2abc28aaee06e6c9e57b6382aa435cfcb337f11b50"
+        ]
+      },
+      "returnsTargetContent": true,
+      "signals": [
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "attaches_process",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "changes_ui_state",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "mutates_session",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_INFERRED",
+          "field": "mutates_target",
+          "rationale": "leaf verb 'set'",
+          "source": "rule:cli-verbs@1",
+          "value": "TRI_TRUE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "reads_screen",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "sends_input",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        },
+        {
+          "confidence": "CONFIDENCE_DECLARED",
+          "field": "writes_clipboard",
+          "rationale": "binding-intrinsic: headless cli_argv in an owned process group (no TTY, stdin /dev/null, private HOME); no UI, input, screen, clipboard or attach surface",
+          "source": "rule:compile@1",
+          "value": "TRI_FALSE"
+        }
+      ],
+      "targetId": "gh",
+      "title": {
+        "source": "harvest",
+        "text": "Create a shortcut for a gh command"
+      }
+    }
+  ],
+  "lockDigest": "bc5b90cd454ab33d6350d08ee1ed4214336fd0221082a2ed5260f5eed970260d",
+  "overlaySha256": "ac9b28e16478d0fd06c05a9fa1b4892fc72845beac6ece3f57a5b03d25e2ea34",
+  "ruleVersions": {
+    "cli-anything": "1",
+    "cli-options": "1",
+    "cli-verbs": "1",
+    "cobra-complete": "1",
+    "compile": "1",
+    "exclusions": "1"
+  },
+  "schema": "aa.lock/v1",
+  "target": {
+    "authorizationStatement": "test",
+    "displayName": "GitHub CLI",
+    "families": [
+      "alias"
+    ],
+    "id": "gh",
+    "identity": {
+      "files": [
+        {
+          "realpath": "/opt/homebrew/bin/gh",
+          "role": "executable",
+          "sha256": "9902b9e709f162e6ed4dedd341916a4f32d59340fc412cbe14a2370a46befdf4"
+        }
+      ],
+      "identityDigest": "17e4b1ca381ce90f32c92d629e4b6193a2bb28eb57ba328c410083d358e7bb2d"
+    },
+    "kind": "TARGET_KIND_CLI_TOOL",
+    "mcpPrefix": "gh",
+    "sources": [
+      {
+        "actionId": "act_01TESTHARVEST",
+        "authority": "DISCOVERY_AUTHORITY_INTROSPECT",
+        "harvestedAt": "2026-11-05T22:10:04+00:00",
+        "harvester": "cobra-complete@1",
+        "sha256": "69371622cbf7e1ec83c5ef2abc28aaee06e6c9e57b6382aa435cfcb337f11b50",
+        "uri": "argv:gh __complete alias"
+      }
+    ],
+    "status": "TARGET_STATUS_SCAFFOLDED"
+  }
+}

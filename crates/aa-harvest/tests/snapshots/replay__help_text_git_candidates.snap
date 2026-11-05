@@ -1,0 +1,658 @@
+---
+source: crates/aa-harvest/tests/replay.rs
+expression: snap
+---
+[
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--dry-run",
+              "pointer": "/dry_run",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--verbose",
+              "pointer": "/verbose",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--interactive",
+              "pointer": "/interactive",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--patch",
+              "pointer": "/patch",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--edit",
+              "pointer": "/edit",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--force",
+              "pointer": "/force",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--update",
+              "pointer": "/update",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--renormalize",
+              "pointer": "/renormalize",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--intent-to-add",
+              "pointer": "/intent_to_add",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--all",
+              "pointer": "/all",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ignore-removal",
+              "pointer": "/ignore_removal",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--refresh",
+              "pointer": "/refresh",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ignore-errors",
+              "pointer": "/ignore_errors",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ignore-missing",
+              "pointer": "/ignore_missing",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--sparse",
+              "pointer": "/sparse",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--chmod",
+              "pointer": "/chmod",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--pathspec-from-file",
+              "pointer": "/pathspec_from_file",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--pathspec-file-nul",
+              "pointer": "/pathspec_file_nul",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "pointer": "/pathspec",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "add"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "description": {
+        "source": "help-text:git add -h",
+        "text": "usage: git add [<options>] [--] <pathspec>..."
+      },
+      "family": "add",
+      "id": "git.add",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"all\":{\"type\":\"boolean\"},\"chmod\":{\"type\":\"string\"},\"dry_run\":{\"type\":\"boolean\"},\"edit\":{\"type\":\"boolean\"},\"force\":{\"type\":\"boolean\"},\"ignore_errors\":{\"type\":\"boolean\"},\"ignore_missing\":{\"type\":\"boolean\"},\"ignore_removal\":{\"type\":\"boolean\"},\"intent_to_add\":{\"type\":\"boolean\"},\"interactive\":{\"type\":\"boolean\"},\"patch\":{\"type\":\"boolean\"},\"pathspec\":{\"items\":{\"type\":\"string\"},\"minItems\":1,\"type\":\"array\"},\"pathspec_file_nul\":{\"type\":\"boolean\"},\"pathspec_from_file\":{\"type\":\"string\"},\"refresh\":{\"type\":\"boolean\"},\"renormalize\":{\"type\":\"boolean\"},\"sparse\":{\"type\":\"boolean\"},\"update\":{\"type\":\"boolean\"},\"verbose\":{\"type\":\"boolean\"}},\"required\":[\"pathspec\"],\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "add"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "add"
+        ],
+        "sourceShas": [
+          "d1fd815190a85fb51313a3927574f79003162ff12268a333dd8410b2b8dffaf3"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "git",
+      "title": {
+        "origin": "CONTENT_ORIGIN_ENGINE",
+        "source": "help-text:argv",
+        "text": "git add"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "add"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--verbose",
+              "pointer": "/verbose",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--quiet",
+              "pointer": "/quiet",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--track",
+              "pointer": "/track",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--set-upstream-to",
+              "pointer": "/set_upstream_to",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--unset-upstream",
+              "pointer": "/unset_upstream",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--color",
+              "pointer": "/color",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--remotes",
+              "pointer": "/remotes",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--contains",
+              "pointer": "/contains",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--no-contains",
+              "pointer": "/no_contains",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--abbrev",
+              "pointer": "/abbrev",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--all",
+              "pointer": "/all",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--delete",
+              "pointer": "/delete",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "-D",
+              "pointer": "/D",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--move",
+              "pointer": "/move",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "-M",
+              "pointer": "/M",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--omit-empty",
+              "pointer": "/omit_empty",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--copy",
+              "pointer": "/copy",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "-C",
+              "pointer": "/C",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--list",
+              "pointer": "/list",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--show-current",
+              "pointer": "/show_current",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--create-reflog",
+              "pointer": "/create_reflog",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--edit-description",
+              "pointer": "/edit_description",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--force",
+              "pointer": "/force",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--merged",
+              "pointer": "/merged",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--no-merged",
+              "pointer": "/no_merged",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--column",
+              "pointer": "/column",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--sort",
+              "pointer": "/sort",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--points-at",
+              "pointer": "/points_at",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--ignore-case",
+              "pointer": "/ignore_case",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--recurse-submodules",
+              "pointer": "/recurse_submodules",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--format",
+              "pointer": "/format",
+              "style": "ARG_STYLE_OPTION"
+            }
+          ],
+          "commandPath": [
+            "branch"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "description": {
+        "source": "help-text:git branch -h",
+        "text": "usage: git branch [<options>] [-r | -a] [--merged] [--no-merged]"
+      },
+      "family": "branch",
+      "id": "git.branch",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"C\":{\"type\":\"boolean\"},\"D\":{\"type\":\"boolean\"},\"M\":{\"type\":\"boolean\"},\"abbrev\":{\"type\":\"integer\"},\"all\":{\"type\":\"boolean\"},\"color\":{\"type\":\"string\"},\"column\":{\"type\":\"string\"},\"contains\":{\"type\":\"string\"},\"copy\":{\"type\":\"boolean\"},\"create_reflog\":{\"type\":\"boolean\"},\"delete\":{\"type\":\"boolean\"},\"edit_description\":{\"type\":\"boolean\"},\"force\":{\"type\":\"boolean\"},\"format\":{\"type\":\"string\"},\"ignore_case\":{\"type\":\"boolean\"},\"list\":{\"type\":\"boolean\"},\"merged\":{\"type\":\"string\"},\"move\":{\"type\":\"boolean\"},\"no_contains\":{\"type\":\"string\"},\"no_merged\":{\"type\":\"string\"},\"omit_empty\":{\"type\":\"boolean\"},\"points_at\":{\"type\":\"string\"},\"quiet\":{\"type\":\"boolean\"},\"recurse_submodules\":{\"type\":\"boolean\"},\"remotes\":{\"type\":\"boolean\"},\"set_upstream_to\":{\"type\":\"string\"},\"show_current\":{\"type\":\"boolean\"},\"sort\":{\"type\":\"string\"},\"track\":{\"enum\":[\"direct\",\"inherit\"],\"type\":\"string\"},\"unset_upstream\":{\"type\":\"boolean\"},\"verbose\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "branch"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "branch"
+        ],
+        "sourceShas": [
+          "d1fd815190a85fb51313a3927574f79003162ff12268a333dd8410b2b8dffaf3"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "git",
+      "title": {
+        "origin": "CONTENT_ORIGIN_ENGINE",
+        "source": "help-text:argv",
+        "text": "git branch"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "branch"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--quiet",
+              "pointer": "/quiet",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--source",
+              "pointer": "/source",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--use-mailmap",
+              "pointer": "/use_mailmap",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--mailmap",
+              "pointer": "/mailmap",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--clear-decorations",
+              "pointer": "/clear_decorations",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--decorate-refs",
+              "pointer": "/decorate_refs",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--decorate-refs-exclude",
+              "pointer": "/decorate_refs_exclude",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--decorate",
+              "pointer": "/decorate",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "-L",
+              "noEqualsForm": true,
+              "pointer": "/L",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "pointer": "/path",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "log"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "description": {
+        "source": "help-text:git log -h",
+        "text": "usage: git log [<options>] [<revision-range>] [[--] <path>...]"
+      },
+      "family": "log",
+      "id": "git.log",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"L\":{\"type\":\"string\"},\"clear_decorations\":{\"type\":\"boolean\"},\"decorate\":{\"type\":\"string\"},\"decorate_refs\":{\"type\":\"string\"},\"decorate_refs_exclude\":{\"type\":\"string\"},\"mailmap\":{\"type\":\"boolean\"},\"path\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"quiet\":{\"type\":\"boolean\"},\"source\":{\"type\":\"boolean\"},\"use_mailmap\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "log"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "log"
+        ],
+        "sourceShas": [
+          "d1fd815190a85fb51313a3927574f79003162ff12268a333dd8410b2b8dffaf3"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "git",
+      "title": {
+        "origin": "CONTENT_ORIGIN_ENGINE",
+        "source": "help-text:argv",
+        "text": "git log"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "log"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "pointer": "/args",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "rev-parse"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "description": {
+        "source": "help-text:git rev-parse -h",
+        "text": "usage: git rev-parse --parseopt [<options>] -- [<args>...]"
+      },
+      "family": "rev-parse",
+      "id": "git.rev-parse",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"args\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "rev-parse"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "rev-parse"
+        ],
+        "sourceShas": [
+          "d1fd815190a85fb51313a3927574f79003162ff12268a333dd8410b2b8dffaf3"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "git",
+      "title": {
+        "origin": "CONTENT_ORIGIN_ENGINE",
+        "source": "help-text:argv",
+        "text": "git rev-parse"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "rev-parse"
+    ],
+    "native_signals": 0
+  },
+  {
+    "capability": {
+      "binding": {
+        "cli": {
+          "args": [
+            {
+              "flag": "--verbose",
+              "pointer": "/verbose",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--short",
+              "pointer": "/short",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--branch",
+              "pointer": "/branch",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--show-stash",
+              "pointer": "/show_stash",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--ahead-behind",
+              "pointer": "/ahead_behind",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--porcelain",
+              "pointer": "/porcelain",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--long",
+              "pointer": "/long",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--null",
+              "pointer": "/null",
+              "style": "ARG_STYLE_NEGATABLE_FLAG"
+            },
+            {
+              "flag": "--untracked-files",
+              "pointer": "/untracked_files",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--ignored",
+              "pointer": "/ignored",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--ignore-submodules",
+              "pointer": "/ignore_submodules",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--column",
+              "pointer": "/column",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "flag": "--no-renames",
+              "pointer": "/no_renames",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--renames",
+              "pointer": "/renames",
+              "style": "ARG_STYLE_FLAG"
+            },
+            {
+              "flag": "--find-renames",
+              "pointer": "/find_renames",
+              "style": "ARG_STYLE_OPTION"
+            },
+            {
+              "pointer": "/pathspec",
+              "style": "ARG_STYLE_POSITIONAL"
+            }
+          ],
+          "commandPath": [
+            "status"
+          ],
+          "deadlineMs": 30000,
+          "errors": "ERROR_CONVENTION_EXIT_CODE",
+          "executableRole": "executable",
+          "killScope": "KILL_SCOPE_OWNED_GROUP",
+          "maxOutputBytes": "8388608",
+          "output": "OUTPUT_MODE_TEXT_STDOUT",
+          "usageExitCode": 129
+        }
+      },
+      "description": {
+        "source": "help-text:git status -h",
+        "text": "usage: git status [<options>] [--] [<pathspec>...]"
+      },
+      "family": "status",
+      "id": "git.status",
+      "inputSchemaJson": "{\"additionalProperties\":false,\"properties\":{\"ahead_behind\":{\"type\":\"boolean\"},\"branch\":{\"type\":\"boolean\"},\"column\":{\"type\":\"string\"},\"find_renames\":{\"type\":\"integer\"},\"ignore_submodules\":{\"enum\":[\"all\",\"dirty\",\"untracked\"],\"type\":\"string\"},\"ignored\":{\"enum\":[\"traditional\",\"matching\",\"no\"],\"type\":\"string\"},\"long\":{\"type\":\"boolean\"},\"no_renames\":{\"type\":\"boolean\"},\"null\":{\"type\":\"boolean\"},\"pathspec\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"porcelain\":{\"type\":\"string\"},\"renames\":{\"type\":\"boolean\"},\"short\":{\"type\":\"boolean\"},\"show_stash\":{\"type\":\"boolean\"},\"untracked_files\":{\"enum\":[\"all\",\"normal\",\"no\"],\"type\":\"string\"},\"verbose\":{\"type\":\"boolean\"}},\"type\":\"object\"}",
+      "lifetime": "LIFETIME_ONESHOT",
+      "projections": {
+        "cliPath": "status"
+      },
+      "provenance": {
+        "fieldConfidence": {
+          "input_schema": "CONFIDENCE_INFERRED"
+        },
+        "nativeIds": [
+          "status"
+        ],
+        "sourceShas": [
+          "d1fd815190a85fb51313a3927574f79003162ff12268a333dd8410b2b8dffaf3"
+        ]
+      },
+      "returnsTargetContent": true,
+      "targetId": "git",
+      "title": {
+        "origin": "CONTENT_ORIGIN_ENGINE",
+        "source": "help-text:argv",
+        "text": "git status"
+      }
+    },
+    "interactive": false,
+    "native_path": [
+      "status"
+    ],
+    "native_signals": 0
+  }
+]

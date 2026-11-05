@@ -1,0 +1,44 @@
+# Example engine policy (format aa-policy/1; architecture §5.5). Default deny; strictest matching rule wins
+# (deny > ask > allow) regardless of order. Matching uses structured descriptors only, never command text.
+#
+# Install it operator-owned and not group/other-writable (the engine refuses a loose policy file):
+#   install -m 0600 examples/policy.toml ~/.config/agentic-anything/policy.toml
+#   aad --policy ~/.config/agentic-anything/policy.toml
+format = "aa-policy/1"
+default = "deny"
+
+[paths]
+# Path parameters of READ capabilities (e.g. git's `repo`) must canonicalize under one of these. The temp roots let
+# the acceptance demo (`R=$(mktemp -d)/repo`) work; narrow them for real use. The e2e tests replace this line.
+read_roots = ["~/src", "~/Documents", "/tmp", "/private/tmp", "/var/folders", "/private/var/folders"]
+# Session workspaces are always writable in addition to these.
+write_roots = ["~/Documents/aa-out", "~/src"]
+# Deny wins over any root.
+deny = ["~/.ssh", "~/.aws", "~/.config/agentic-anything", "~/Library/Keychains"]
+
+[[rule]]
+id = "observe-registered"
+effect = "allow"
+when = { tier = "observe", target_registered = true }
+
+[[rule]]
+id = "write-in-roots"
+effect = "allow"
+when = { level = "write", targets = ["git", "cli-anything.*"] }   # PathScope still applies
+
+[[rule]]
+id = "destructive"
+effect = "ask"
+when = { level = "destructive" }
+approval_sources = ["operator_socket"]                          # never elicitation, never grants
+
+[[rule]]
+id = "tainted-exfil"
+effect = "ask"
+when = { session_tainted = true, any_effect = ["external_side_effect", "executes_foreign_code", "reads_credentials", "writes_clipboard"] }
+approval_sources = ["operator_socket"]
+
+[[rule]]
+id = "privacy-reads"
+effect = "ask"
+when = { any_effect = ["reads_screen", "reads_clipboard", "reads_credentials"] }

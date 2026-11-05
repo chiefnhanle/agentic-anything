@@ -1,0 +1,74 @@
+[workspace]
+resolver = "3"
+members = ["crates/aa-proto", "crates/aa-core", "crates/aa-exec", "crates/aa-harvest",
+           "crates/aa-store", "crates/aa-engine", "crates/aa-cli"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+version = "0.1.0"
+
+# Every external dependency of every work package is pinned here (build-plan §3.0.1), so later
+# packages never need to change root dependencies or Cargo.lock-affecting versions.
+[workspace.dependencies]
+aa-proto = { path = "crates/aa-proto" }
+aa-core = { path = "crates/aa-core" }
+aa-exec = { path = "crates/aa-exec" }
+aa-harvest = { path = "crates/aa-harvest" }
+aa-store = { path = "crates/aa-store" }
+aa-engine = { path = "crates/aa-engine" }
+prost = "0.14.4"
+prost-types = "0.14.4"
+tonic = { version = "0.14.9", default-features = false, features = ["codegen", "transport", "router"] }
+tonic-prost = "0.14.9"
+tonic-prost-build = "0.14.9"
+pbjson = "0.9.0"
+pbjson-types = "0.9.0"
+pbjson-build = "0.9.0"
+prost-reflect = "0.16.5"
+serde = { version = "1.0.229", features = ["derive"] }
+# float_roundtrip: exact float parsing, so JCS (RFC 8785) digests of parsed input are stable.
+serde_json = { version = "1.0.154", features = ["float_roundtrip"] }
+serde_json_canonicalizer = "0.4.1"
+serde_yaml_ng = "0.10.0"
+toml = "1.2.0"
+sha2 = "0.11.1"
+hmac = "0.13.0"
+blake3 = "1.8.7"
+ulid = "3.0.0"
+thiserror = "2.0.21"
+anyhow = "1.0.104"
+async-trait = "0.1.92"
+# No default features: the defaults pull reqwest/rustls/tokio (remote $ref resolution), which aa-core bans.
+jsonschema = { version = "0.60.2", default-features = false }
+regex = "1.13.1"
+globset = "0.4.21"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "macros", "net", "process", "time", "signal", "fs", "io-util", "sync"] }
+tokio-stream = { version = "0.1.19", features = ["net"] }
+tower = { version = "0.5.3", features = ["util"] }
+http = "1.5.0"
+# TokioIo adapter for the in-process duplex transport (aa-engine `connect_in_process`).
+hyper-util = { version = "0.1.21", features = ["tokio"] }
+# Unix process groups + kill-on-drop for the tokio runtime (Windows job-object features off).
+process-wrap = { version = "10.0.1", default-features = false, features = ["tokio1", "process-group", "process-session", "kill-on-drop", "reset-sigmask", "tracing"] }
+rustix = { version = "1.1.6", features = ["process", "fs"] }
+nix = { version = "0.31.3", features = ["signal", "process", "user"] }
+tempfile = "3.27.0"
+walkdir = "2.5.0"
+which = "8.0.6"
+fd-lock = "4.0.4"
+clap = { version = "4.6.7", features = ["derive", "env"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+proptest = "1.12.0"
+insta = { version = "1.49.0", features = ["json"] }
+assert_cmd = "2.2.2"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+# The frozen API returns `Result<_, AaError>` / `Result<_, CliError>` everywhere (build-plan §3.0.4, §3.6);
+# both carry several Strings/Options (and tonic::Status), which trips this size heuristic on every function.
+result_large_err = "allow"

@@ -1,0 +1,57 @@
+{
+  "protocol": "aa-cobra-complete/1",
+  "harvester": "cobra-complete@1",
+  "program": "gh",
+  "version_banner": "gh version 2.62.0 (2024-11-14)",
+  "calls": [
+    {
+      "argv": [
+        "gh",
+        "__complete",
+        "alias",
+        ""
+      ],
+      "stdout": "delete\tDelete set aliases\nimport\tImport aliases from a YAML file\nlist\tList your aliases\nset\tCreate a shortcut for a gh command\n:4\n"
+    },
+    {
+      "argv": [
+        "gh",
+        "__complete",
+        "alias",
+        "delete",
+        "--"
+      ],
+      "stdout": "--all\tDelete all aliases\n--help\tShow help for command\n:4\n"
+    },
+    {
+      "argv": [
+        "gh",
+        "__complete",
+        "alias",
+        "import",
+        "--"
+      ],
+      "stdout": "--clobber\tOverwrite existing aliases of the same name\n--help\tShow help for command\n:4\n"
+    },
+    {
+      "argv": [
+        "gh",
+        "__complete",
+        "alias",
+        "list",
+        "--"
+      ],
+      "stdout": "--help\tShow help for command\n:4\n"
+    },
+    {
+      "argv": [
+        "gh",
+        "__complete",
+        "alias",
+        "set",
+        "--"
+      ],
+      "stdout": "--clobber\tOverwrite existing aliases of the same name\n--help\tShow help for command\n--shell\tDeclare an alias to be passed through a shell interpreter\n:4\n"
+    }
+  ]
+}
