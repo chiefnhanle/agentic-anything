@@ -175,6 +175,10 @@ pub struct ArgSpec {
     pub style: String,
     pub flag: Option<String>,
     pub position: Option<u32>,
+    /// JSON Schema of the input property, for a parameter the harvest did not list (e.g. `git log --max-count`,
+    /// which `git log -h` omits). Absent: the harvested property schema, else a default for the style.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub schema: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -442,6 +446,12 @@ pub fn validate_overlay(o: &Overlay) -> crate::AaResult<()> {
                 if style != pb::ArgStyle::Positional && a.flag.as_deref().is_none_or(|f| !f.starts_with('-')) {
                     return Err(bad(format!(
                         "capabilities.{id}.binding.args {}: a non-positional arg needs a flag",
+                        a.pointer
+                    )));
+                }
+                if a.schema.as_ref().is_some_and(|s| !s.is_object()) {
+                    return Err(bad(format!(
+                        "capabilities.{id}.binding.args {}: schema must be a JSON Schema object",
                         a.pointer
                     )));
                 }

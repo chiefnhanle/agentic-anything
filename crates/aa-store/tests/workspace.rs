@@ -129,57 +129,36 @@ fn hmac_key_concurrent_first_use_agrees() {
     assert!(keys.windows(2).all(|w| w[0] == w[1]));
 }
 
-/// Runs `f` unless WP1's `aa_core::manifest` lock I/O is still a `todo!()` stub (concurrent development);
-/// any other panic still fails the test.
-fn with_lock_io(f: impl FnOnce()) {
-    let probe = std::panic::catch_unwind(|| {
-        let _ = aa_core::manifest::lock_to_json(&pb::CapabilityLock::default());
-    });
-    if let Err(p) = probe {
-        let msg = p
-            .downcast_ref::<String>()
-            .cloned()
-            .or_else(|| p.downcast_ref::<&str>().map(|s| s.to_string()))
-            .unwrap_or_default();
-        assert!(msg.contains("WP1"), "lock_to_json panicked: {msg}");
-        eprintln!("SKIP: aa_core::manifest::lock_to_json is still a WP1 stub");
-        return;
-    }
-    f();
-}
-
 #[test]
 fn t5_write_lock_read_lock_write_lock_is_byte_identical() {
-    with_lock_io(|| {
-        let d = tempfile::tempdir().unwrap();
-        let ws = Workspace::open(d.path()).unwrap();
-        let mut lock = pb::CapabilityLock {
-            schema: "aa.lock/v1".into(),
-            target: Some(target("git")),
-            capabilities: vec![pb::Capability {
-                id: "git.status".into(),
-                input_schema_json: r#"{"type":"object","properties":{"repo":{"type":"string"}}}"#.into(),
-                ..Default::default()
-            }],
-            rule_versions: [("rule:cli-verbs".to_string(), "1".to_string())].into_iter().collect(),
-            overlay_sha256: digest::sha256_hex(b"overlay"),
-            lock_digest: String::new(),
-        };
-        aa_core::manifest::finalize_digest(&mut lock).unwrap();
-        let sha1 = ws.write_lock(&lock).unwrap();
-        let path = ws.target_dir("git").join("capabilities.lock.json");
-        let bytes1 = fs::read(&path).unwrap();
-        assert_eq!(sha1, digest::sha256_hex(&bytes1));
-        assert_eq!(bytes1, aa_core::manifest::lock_to_json(&lock).unwrap());
-        assert_eq!(bytes1.last(), Some(&b'\n'));
+    let d = tempfile::tempdir().unwrap();
+    let ws = Workspace::open(d.path()).unwrap();
+    let mut lock = pb::CapabilityLock {
+        schema: "aa.lock/v1".into(),
+        target: Some(target("git")),
+        capabilities: vec![pb::Capability {
+            id: "git.status".into(),
+            input_schema_json: r#"{"type":"object","properties":{"repo":{"type":"string"}}}"#.into(),
+            ..Default::default()
+        }],
+        rule_versions: [("rule:cli-verbs".to_string(), "1".to_string())].into_iter().collect(),
+        overlay_sha256: digest::sha256_hex(b"overlay"),
+        lock_digest: String::new(),
+    };
+    aa_core::manifest::finalize_digest(&mut lock).unwrap();
+    let sha1 = ws.write_lock(&lock).unwrap();
+    let path = ws.target_dir("git").join("capabilities.lock.json");
+    let bytes1 = fs::read(&path).unwrap();
+    assert_eq!(sha1, digest::sha256_hex(&bytes1));
+    assert_eq!(bytes1, aa_core::manifest::lock_to_json(&lock).unwrap());
+    assert_eq!(bytes1.last(), Some(&b'\n'));
 
-        let back = ws.read_lock("git").unwrap().expect("lock present");
-        assert_eq!(back, lock);
-        let sha2 = ws.write_lock(&back).unwrap();
-        assert_eq!(fs::read(&path).unwrap(), bytes1, "byte-identical rewrite");
-        assert_eq!(sha2, sha1);
-        assert!(ws.read_lock("other").unwrap().is_none());
-    });
+    let back = ws.read_lock("git").unwrap().expect("lock present");
+    assert_eq!(back, lock);
+    let sha2 = ws.write_lock(&back).unwrap();
+    assert_eq!(fs::read(&path).unwrap(), bytes1, "byte-identical rewrite");
+    assert_eq!(sha2, sha1);
+    assert!(ws.read_lock("other").unwrap().is_none());
 }
 
 #[test]

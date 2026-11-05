@@ -61,20 +61,19 @@ capabilities:
       - { input: { repo: { $root: /repo } }, fixture: one-commit-repo }
       - { input: { repo: { $root: /repo }, untracked_files: "no" }, fixture: one-commit-repo }
   git.log:
-    # §7.3 serves --max-count/--author, but `git log -h` lists only log-specific options (those two are revision
-    # options), and compile accepts binding.args only for harvested parameters. Until overlays may add parameters,
-    # git.log is curated to harvested flags.
+    # §7.3: --max-count and --author. `git log -h` lists only log-specific options (these two are revision
+    # options), so the overlay adds them with explicit property schemas; the input schema is exactly these args.
     binding:
       args:
-        - { pointer: /source, style: NEGATABLE_FLAG, flag: --source }
-        - { pointer: /use_mailmap, style: NEGATABLE_FLAG, flag: --use-mailmap }
+        - { pointer: /max_count, style: OPTION, flag: --max-count, schema: { type: integer, minimum: 1, maximum: 10000 } }
+        - { pointer: /author, style: OPTION, flag: --author, schema: { type: string, maxLength: 256 } }
     fixed_args: ["--format=%H%x09%an%x09%aI%x09%s"]
     scopes: [ { pointer: /repo, kind: READ_PATH } ]
     cwd_pointer: /repo
     core: true
     examples:
-      - { input: { repo: { $root: /repo } }, fixture: one-commit-repo }
-      - { input: { repo: { $root: /repo }, use_mailmap: false }, fixture: one-commit-repo }
+      - { input: { repo: { $root: /repo }, max_count: 5 }, fixture: one-commit-repo }
+      - { input: { repo: { $root: /repo }, max_count: 1, author: aa }, fixture: one-commit-repo }
   git.add:
     scopes: [ { pointer: /repo, kind: WRITE_PATH } ]
     cwd_pointer: /repo

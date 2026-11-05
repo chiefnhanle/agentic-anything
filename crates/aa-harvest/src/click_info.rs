@@ -41,6 +41,15 @@ fn entry_point(target: &pb::Target, options: &Value) -> Option<String> {
             .strip_prefix("cli-anything.")
             .map(|n| format!("cli-anything-{n}"));
     }
+    // A python_console_script target pins the script (`executable`) and its shebang interpreter: the console
+    // script's file name is its [project.scripts] entry point name.
+    if common::identity_file(target, "interpreter").is_some() {
+        return common::identity_file(target, "executable")
+            .and_then(|f| std::path::Path::new(&f.realpath).file_name())
+            .and_then(|n| n.to_str())
+            .filter(|n| !n.is_empty())
+            .map(str::to_owned);
+    }
     None
 }
 
@@ -242,7 +251,7 @@ impl Walk<'_> {
         };
         let description = (!help.is_empty())
             .then(|| common::target_text(help, pb::ContentOrigin::Target, format!("click-info:{native_id}")));
-        let mut scopes: Vec<pb::ScopeParam> = analysis
+        let scopes: Vec<pb::ScopeParam> = analysis
             .paths
             .iter()
             .map(|(pointer, u)| pb::ScopeParam {
@@ -277,13 +286,10 @@ impl Walk<'_> {
             ..Default::default()
         };
         if let Some(flag) = &self.globals.project_flag {
+            // Engine-supplied (CLI-Anything --project): the agent never names the project file, so the handle has
+            // no input pointer and no pointer scope (the gate supplies a path inside the session workspace).
             binding.state_handle_flag = flag.clone();
-            binding.state_handle_pointer = "/project".into();
             binding.state_handle_engine_supplied = true;
-            scopes.push(pb::ScopeParam {
-                pointer: "/project".into(),
-                kind: pb::ScopeKind::StateHandle as i32,
-            });
         }
         let dry_run = self.globals.dry_run_flag.as_ref().map(|flag| pb::DryRun {
             supported: true,
@@ -367,5 +373,22 @@ mod tests {
         );
         t.kind = pb::TargetKind::CliTool as i32;
         assert_eq!(entry_point(&t, &Value::Null), None);
+        // python_console_script: the script's file name.
+        t.identity = Some(pb::TargetIdentity {
+            files: vec![
+                pb::FileIdentity {
+                    role: "executable".into(),
+                    realpath: "/v/bin/notes".into(),
+                    ..Default::default()
+                },
+                pb::FileIdentity {
+                    role: "interpreter".into(),
+                    realpath: "/v/bin/python".into(),
+                    ..Default::default()
+                },
+            ],
+            ..Default::default()
+        });
+        assert_eq!(entry_point(&t, &Value::Null).as_deref(), Some("notes"));
     }
 }

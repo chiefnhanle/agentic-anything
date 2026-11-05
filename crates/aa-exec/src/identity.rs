@@ -158,6 +158,30 @@ pub fn file_identity_as_invoked(
     Ok(id)
 }
 
+/// The macOS framework-build companion of a Python interpreter, if any.
+///
+/// A framework Python (Homebrew, python.org) at `…/Python.framework/Versions/X.Y/bin/pythonX.Y` re-execs
+/// `…/Python.framework/Versions/X.Y/Resources/Python.app/Contents/MacOS/Python` at startup. Under the Seatbelt
+/// exec allow-list that re-exec is denied (`posix_spawn: …: Undefined error: 0`) unless the companion is pinned
+/// too, so callers pinning an interpreter should also pin this file (role [`INTERPRETER_APP_ROLE`]).
+pub fn framework_python_app(interpreter: &std::path::Path) -> Option<std::path::PathBuf> {
+    let real = std::fs::canonicalize(interpreter).ok()?;
+    let bin = real.parent()?;
+    if bin.file_name()? != "bin" {
+        return None;
+    }
+    let version_dir = bin.parent()?;
+    let versions = version_dir.parent()?;
+    if versions.file_name()? != "Versions" || versions.parent()?.file_name()? != "Python.framework" {
+        return None;
+    }
+    let app = version_dir.join("Resources/Python.app/Contents/MacOS/Python");
+    app.is_file().then_some(app)
+}
+
+/// Role of the pinned framework companion returned by [`framework_python_app`].
+pub const INTERPRETER_APP_ROLE: &str = "interpreter:app";
+
 pub fn identity_digest(id: &aa_core::pb::TargetIdentity) -> aa_core::AaResult<String> {
     aa_core::digest::self_digest(id, |i| i.identity_digest.clear())
 }

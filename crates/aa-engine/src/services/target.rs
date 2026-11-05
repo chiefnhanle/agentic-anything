@@ -100,10 +100,14 @@ impl Engine {
                     )));
                 }
                 let interp = shebang_interpreter(&script_path)?;
-                let files = vec![
+                let mut files = vec![
                     self.sem.file_identity("executable", &script_path)?,
                     self.sem.file_identity_as_invoked("interpreter", &interp)?,
                 ];
+                // A framework Python re-execs its Python.app binary; pin it so confinement allows that exec.
+                if let Some(app) = aa_exec::identity::framework_python_app(&interp) {
+                    files.push(self.sem.file_identity(aa_exec::identity::INTERPRETER_APP_ROLE, &app)?);
+                }
                 (
                     pb::TargetKind::CliTool,
                     files,

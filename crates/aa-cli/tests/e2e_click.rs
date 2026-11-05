@@ -39,7 +39,6 @@ fn reasons_include(cap: &Value, reason: &str) -> bool {
 }
 
 #[test]
-#[ignore = "needs integration"]
 fn click_fixture_end_to_end() {
     let script = match notes_script() {
         Ok(s) => s,

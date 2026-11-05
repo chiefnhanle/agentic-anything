@@ -133,7 +133,15 @@ fn click_params_on_notes_leaves() {
         .map(|s| (s.pointer.clone(), s.kind))
         .collect();
     assert!(scopes.contains(&("/output_path".into(), pb::ScopeKind::WritePath as i32)));
-    assert!(scopes.contains(&("/project".into(), pb::ScopeKind::StateHandle as i32)));
+    // The CLI-Anything --project handle is engine-supplied: no agent input pointer, so no pointer scope.
+    assert!(!scopes.iter().any(|(_, k)| *k == pb::ScopeKind::StateHandle as i32));
+    let binding = match by("export").capability.binding.as_ref().and_then(|b| b.kind.as_ref()) {
+        Some(pb::binding::Kind::Cli(c)) => c.clone(),
+        other => panic!("not a cli binding: {other:?}"),
+    };
+    assert_eq!(binding.state_handle_flag, "--project");
+    assert!(binding.state_handle_engine_supplied);
+    assert!(binding.state_handle_pointer.is_empty());
     let list = schema(by("notes list"));
     assert_eq!(
         list["properties"]["limit"],
@@ -448,6 +456,17 @@ fn applies_rules() {
     assert!(!ClickInfoHarvester.applies(&notes_target(), &none));
     assert!(!ClickInfoHarvester.applies(&git_target(), &json!({"entry_point": "notes"})));
     assert!(CobraCompleteHarvester.applies(&gh_target(), &none));
+    // A python_console_script target (script + shebang interpreter): click-info by default, never cobra.
+    let script = target(
+        "notes",
+        pb::TargetKind::CliTool,
+        vec![
+            file("executable", "/venv/bin/notes"),
+            file("interpreter", "/venv/bin/python"),
+        ],
+    );
+    assert!(ClickInfoHarvester.applies(&script, &none));
+    assert!(!CobraCompleteHarvester.applies(&script, &none));
     assert!(HelpTextHarvester.applies(&git_target(), &json!({"commands": ["status"]})));
     assert!(!HelpTextHarvester.applies(&git_target(), &none));
     let reg = aa_harvest::CliAnythingRegistryHarvester;

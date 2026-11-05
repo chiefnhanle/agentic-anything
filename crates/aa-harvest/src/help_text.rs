@@ -232,6 +232,25 @@ pub(crate) fn usage_line(text: &str) -> Option<String> {
     None
 }
 
+/// The whole usage block: the first usage line plus every following git-style `or: …` line. aa-core's help-text
+/// multi-mode rule reads the `or:` forms (e.g. `git rev-parse --parseopt …` / `or: git rev-parse --sq-quote …`) to
+/// withhold an unsplit native candidate as MIXED_AUTHORITY.
+pub(crate) fn usage_block(text: &str) -> Option<String> {
+    let first = usage_line(text)?;
+    let mut out = vec![format!("usage: {first}")];
+    let mut lines = text.lines().map(str::trim);
+    // Skip to the first usage line, then collect the contiguous `or:` lines after it.
+    if lines.by_ref().any(|l| l.ends_with(first.as_str())) {
+        for l in lines {
+            match l.strip_prefix("or:") {
+                Some(rest) => out.push(format!("   or: {}", rest.trim())),
+                None => break,
+            }
+        }
+    }
+    Some(out.join("\n"))
+}
+
 /// Positionals of a usage line. If the line has a `--` separator, only placeholders after it count (the binding
 /// always emits positionals after `--`). Option values (`--format <fmt>`) and `<options>`/`<flags>` are skipped.
 pub(crate) fn parse_usage_positionals(usage: &str) -> Vec<Positional> {
@@ -542,13 +561,8 @@ fn call_candidate(target: &pb::Target, exe: &str, call: &Value, sha: &str) -> Aa
         usage_exit_code: i32::try_from(exit).ok().filter(|c| *c != 0 && *c != 1).unwrap_or(0),
         ..Default::default()
     };
-    let description = usage.map(|u| {
-        common::target_text(
-            format!("usage: {u}"),
-            pb::ContentOrigin::Target,
-            format!("help-text:{exe} {command} -h"),
-        )
-    });
+    let description = usage_block(text)
+        .map(|u| common::target_text(u, pb::ContentOrigin::Target, format!("help-text:{exe} {command} -h")));
     common::candidate(
         target,
         CandidateParts {
@@ -673,6 +687,25 @@ mod tests {
         assert_eq!(enum_values(&o[7]).unwrap(), ["open", "closed", "merged", "all"]);
         assert_eq!(o[8].value.as_deref(), Some("[HOST/]OWNER/REPO"));
         assert_eq!(o[9], opt("draft", Some('d'), None, false, "Filter by draft state"));
+    }
+
+    #[test]
+    fn usage_block_keeps_or_lines() {
+        let text = "usage: git rev-parse --parseopt [<options>] -- [<args>...]\n   or: git rev-parse --sq-quote [<arg>...]\n   or: git rev-parse [<options>] [<arg>...]\n\nRun \"git rev-parse --parseopt -h\" for more\n";
+        assert_eq!(
+            usage_block(text).as_deref(),
+            Some(
+                "usage: git rev-parse --parseopt [<options>] -- [<args>...]\n   or: git rev-parse --sq-quote [<arg>...]\n   or: git rev-parse [<options>] [<arg>...]"
+            )
+        );
+        assert_eq!(
+            usage_block("usage: git status [<options>] [--] [<pathspec>...]\n\n    -v\n").as_deref(),
+            Some("usage: git status [<options>] [--] [<pathspec>...]")
+        );
+        assert_eq!(
+            usage_block("USAGE\n  gh alias set <alias> <expansion> [flags]\n").as_deref(),
+            Some("usage: gh alias set <alias> <expansion> [flags]")
+        );
     }
 
     #[test]

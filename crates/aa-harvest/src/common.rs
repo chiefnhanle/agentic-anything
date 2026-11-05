@@ -65,7 +65,12 @@ pub(crate) fn exec_allow(target: &pb::Target) -> Vec<PathBuf> {
         .map(|id| {
             id.files
                 .iter()
-                .filter(|f| f.role == "executable" || f.role == "interpreter" || f.role.starts_with("backend:"))
+                .filter(|f| {
+                    f.role == "executable"
+                        || f.role == "interpreter"
+                        || f.role.starts_with("interpreter:")
+                        || f.role.starts_with("backend:")
+                })
                 .map(|f| PathBuf::from(&f.realpath))
                 .collect()
         })
@@ -327,6 +332,25 @@ pub(crate) fn file_name(path: &str) -> String {
     Path::new(path)
         .file_name()
         .map_or_else(|| path.to_owned(), |n| n.to_string_lossy().into_owned())
+}
+
+/// The macOS framework-build companion of a Python interpreter (`…/Python.framework/Versions/X.Y/Resources/
+/// Python.app/Contents/MacOS/Python`), which a framework `pythonX.Y` re-execs at startup. Pinned as
+/// `interpreter:app` so the confinement exec allow-list admits it (mirrors `aa_exec::identity::framework_python_app`;
+/// aa-harvest does not depend on aa-exec).
+pub(crate) fn framework_python_app(interpreter: &std::path::Path) -> Option<PathBuf> {
+    let real = std::fs::canonicalize(interpreter).ok()?;
+    let bin = real.parent()?;
+    if bin.file_name()? != "bin" {
+        return None;
+    }
+    let version_dir = bin.parent()?;
+    let versions = version_dir.parent()?;
+    if versions.file_name()? != "Versions" || versions.parent()?.file_name()? != "Python.framework" {
+        return None;
+    }
+    let app = version_dir.join("Resources/Python.app/Contents/MacOS/Python");
+    app.is_file().then_some(app)
 }
 
 #[cfg(test)]

@@ -202,6 +202,33 @@ impl Schema {
     }
 }
 
+/// The input schema of a capability whose overlay lists `binding.args`: exactly those parameters. Each property
+/// is the arg's explicit `schema`, else the harvested property, else a default for its style; a harvested
+/// required parameter stays required, and an added positional is required.
+fn curated_schema(harvested: &Schema, args: &[ArgSpec]) -> AaResult<Schema> {
+    let mut schema = Schema(Map::new()).normalized();
+    let harvested_required = harvested.required();
+    let mut required = Vec::new();
+    for a in args {
+        let Some(name) = pointer_property(&a.pointer) else {
+            continue;
+        };
+        let style = overlay::arg_style(&a.style)?;
+        let prop = match (&a.schema, harvested.prop(&name)) {
+            (Some(s), _) => s.clone(),
+            (None, Some(p)) => p.clone(),
+            (None, None) => default_prop_schema(style),
+        };
+        let added = harvested.prop(&name).is_none();
+        schema.props().insert(name.clone(), prop);
+        if harvested_required.contains(&name) || (added && style == pb::ArgStyle::Positional) {
+            required.push(name);
+        }
+    }
+    schema.set_required(required);
+    Ok(schema)
+}
+
 fn default_prop_schema(style: pb::ArgStyle) -> Value {
     match style {
         pb::ArgStyle::Flag | pb::ArgStyle::NegatableFlag => json!({"type": "boolean"}),
@@ -576,11 +603,24 @@ fn build(
     let oc = ov.capabilities.get(&cap.id);
     merge_binding(target, ov, oc, cand, &mut cap)?;
 
-    // Input schema: drop browser launchers, add cwd / state-handle params, close.
+    // Input schema: restrict to the overlay's binding.args (if any), drop browser launchers, add cwd /
+    // state-handle params, close.
     let mut schema = Schema::parse(&cap.input_schema_json, &cap.id)?;
+    if let Some(args) = oc.and_then(|o| o.binding.as_ref()).and_then(|b| b.args.as_ref()) {
+        schema = curated_schema(&schema, args)?;
+        let kept: BTreeSet<String> = args.iter().filter_map(|a| pointer_property(&a.pointer)).collect();
+        // Scopes of parameters the overlay no longer exposes go with them (overlay scopes are added below).
+        cap.scopes
+            .retain(|s| pointer_property(&s.pointer).is_none_or(|n| kept.contains(&n)));
+    }
     let mut extra_scopes = Vec::new();
     let cap_id = cap.id.clone();
     if let Some(c) = cli_mut(&mut cap) {
+        // An engine-supplied state handle is never an agent input: no pointer, no pointer scope.
+        let engine_supplied_handle = c.state_handle_engine_supplied;
+        if engine_supplied_handle {
+            c.state_handle_pointer.clear();
+        }
         let dropped: Vec<pb::ArgMapping> = c.args.iter().filter(|a| rules::excluded_param(a)).cloned().collect();
         c.args.retain(|a| !rules::excluded_param(a));
         for a in &dropped {
@@ -612,7 +652,10 @@ fn build(
         }
         // A dropped parameter's scopes go with it.
         let dropped_ptrs: BTreeSet<&str> = dropped.iter().map(|a| a.pointer.as_str()).collect();
-        cap.scopes.retain(|s| !dropped_ptrs.contains(s.pointer.as_str()));
+        cap.scopes.retain(|s| {
+            !dropped_ptrs.contains(s.pointer.as_str())
+                && !(engine_supplied_handle && s.kind == pb::ScopeKind::StateHandle as i32)
+        });
     }
     schema.close();
     cap.input_schema_json = schema.to_json()?;
@@ -724,9 +767,10 @@ fn split_candidate(
             continue;
         };
         let style = overlay::arg_style(&a.style)?;
-        let prop = base_schema
-            .prop(&name)
-            .cloned()
+        let prop = a
+            .schema
+            .clone()
+            .or_else(|| base_schema.prop(&name).cloned())
             .unwrap_or_else(|| default_prop_schema(style));
         schema.props().insert(name.clone(), prop);
         if base_required.contains(&name) || style == pb::ArgStyle::Positional {

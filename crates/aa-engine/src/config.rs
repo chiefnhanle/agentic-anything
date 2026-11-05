@@ -85,11 +85,16 @@ fn default_runtime_dir() -> PathBuf {
     } else {
         var("XDG_RUNTIME_DIR")
     };
-    match preferred {
-        Some(p) => p.join("aa"),
-        None => PathBuf::from(format!("/tmp/aa-{}", euid())),
+    // ADR 0005: fall back to /tmp/aa-<uid> when <dir>/operator.sock would exceed the ~100-byte sun_path budget
+    // (the client applies the same rule, so both sides agree).
+    match preferred.map(|p| p.join("aa")) {
+        Some(dir) if dir.join("operator.sock").as_os_str().len() <= MAX_SOCKET_PATH => dir,
+        _ => PathBuf::from(format!("/tmp/aa-{}", euid())),
     }
 }
+
+/// Longest socket path the runtime dir may produce (`sun_path` is 104 bytes on macOS, 108 on Linux).
+const MAX_SOCKET_PATH: usize = 100;
 
 fn parse_uids(v: &str) -> AaResult<Vec<u32>> {
     v.split(',')

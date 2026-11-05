@@ -12,7 +12,6 @@ fn env_path(name: &str) -> Option<String> {
 }
 
 #[test]
-#[ignore = "needs integration"]
 fn libreoffice_harness_end_to_end() {
     let (Some(repo), Some(python)) = (env_path("AA_TEST_CLI_ANYTHING"), env_path("AA_TEST_LO_PYTHON")) else {
         return skip(

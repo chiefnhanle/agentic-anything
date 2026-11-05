@@ -530,6 +530,9 @@ pub fn import_harness(
         ));
     }
     let mut files = vec![file_identity("interpreter", python, true)?];
+    if let Some(app) = common::framework_python_app(python) {
+        files.push(file_identity("interpreter:app", &app, false)?);
+    }
     let module = entry_module(&harness, &entry.entry_point).ok_or_else(|| {
         AaError::new(
             pb::ErrorCode::ConfigurationInvalid,

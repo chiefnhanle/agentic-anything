@@ -116,7 +116,8 @@ impl Harvester for CobraCompleteHarvester {
 
     fn applies(&self, target: &pb::Target, options: &serde_json::Value) -> bool {
         let _ = options;
-        common::identity_file(target, "executable").is_some()
+        // A python_console_script (pinned interpreter) is not a Cobra binary; click-info covers it.
+        common::identity_file(target, "executable").is_some() && common::identity_file(target, "interpreter").is_none()
     }
 
     async fn harvest(&self, ctx: HarvestCtx<'_>) -> AaResult<Vec<RawHarvest>> {

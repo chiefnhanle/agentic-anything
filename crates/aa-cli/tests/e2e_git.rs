@@ -43,7 +43,6 @@ fn cap<'a>(caps: &'a BTreeMap<String, Value>, id: &str) -> &'a Value {
 }
 
 #[test]
-#[ignore = "needs integration"]
 fn git_headline() {
     let e = Engine::start();
     let repo = e.root.join("repo");
@@ -99,6 +98,20 @@ fn git_headline() {
     assert_ne!(admission(add), "ADMISSION_STATE_SERVABLE");
     assert!(has_reason(add, "WITHHELD_REASON_NOT_VERIFIED"), "{add}");
     assert_ne!(admission(cap(&caps, "git.branch.delete")), "ADMISSION_STATE_SERVABLE");
+    // The overlay's binding.args are git.log's whole input schema, including the parameters it adds (§7.3).
+    let desc = e.ok(&["describe", "git.log"]);
+    let schema: Value = serde_json::from_str(desc["capability"]["inputSchemaJson"].as_str().unwrap_or("{}")).unwrap();
+    let mut props: Vec<&str> = schema["properties"]
+        .as_object()
+        .map(|m| m.keys().map(String::as_str).collect())
+        .unwrap_or_default();
+    props.sort_unstable();
+    assert_eq!(props, ["author", "max_count", "repo"], "{schema}");
+    assert_eq!(schema["properties"]["max_count"]["type"], "integer", "{schema}");
+    // `git rev-parse -h` shows three usage forms of the same command: unsplit, it switches authority by mode.
+    let rev_parse = cap(&caps, "git.rev-parse");
+    assert_ne!(admission(rev_parse), "ADMISSION_STATE_SERVABLE");
+    assert!(has_reason(rev_parse, "WITHHELD_REASON_MIXED_AUTHORITY"), "{rev_parse}");
 
     // 4. Invoke a servable READ.
     let r = e.aa_env(&[
@@ -262,7 +275,6 @@ fn unlocked_overlay_transform_applies() {
 }
 
 #[test]
-#[ignore = "needs integration"]
 fn git_status_side_effect_caught() {
     let e = Engine::start();
     let overlay = e.root.join("git-unlocked.aa.yaml");
@@ -295,7 +307,6 @@ fn git_status_side_effect_caught() {
 }
 
 #[test]
-#[ignore = "needs integration"]
 fn operator_split_from_cli() {
     let e = Engine::start();
     let halted = e.ok(&["halt", "--reason", "e2e"]);

@@ -129,6 +129,16 @@ impl<S> RoleService<S> {
                 format!("operator: aa unhalt --epoch {}", h.halt_epoch),
             )
             .with_recovery(pb::RecoveryKind::RestartEngine, "aa unhalt");
+            // Every attempt lands in the audit log: a halted refusal of an audited RPC or of Invoke (whose
+            // ActionRecord the gate would have written) is an AdminEvent, unless the halt itself is an audit
+            // failure (never append to a log that failed to verify or to write).
+            let audit_ok = !matches!(
+                pb::HaltSource::try_from(h.source).unwrap_or(pb::HaltSource::Unspecified),
+                pb::HaltSource::AuditVerifyFailed | pb::HaltSource::Unspecified
+            );
+            if (row.audited || path == INVOKE_PATH) && audit_ok {
+                self.audit_refusal(path, &principal, &err);
+            }
             return Err(status_for(tonic::Code::Unavailable, &err));
         }
         Ok(principal)
@@ -137,19 +147,26 @@ impl<S> RoleService<S> {
     /// Builds the PERMISSION_DENIED status; audited RPCs also get an AdminEvent.
     fn deny(&self, path: &str, principal: &pb::Principal, err: AaError) -> tonic::Status {
         if aa_proto::rpc_policy(path).is_some_and(|r| r.audited) {
-            let details =
-                serde_json::json!({ "rpc": path, "denied": "ERROR_CODE_ACCESS_DENIED", "message": err.message });
-            if let Err(e) = self
-                .layer
-                .engine
-                .admin(principal, pb::AdminEventKind::Unspecified, path, details)
-            {
-                tracing::error!(error = %e, "could not audit a denied RPC");
-            }
+            self.audit_refusal(path, principal, &err);
         }
         status_for(tonic::Code::PermissionDenied, &err)
     }
+
+    /// An AdminEvent naming the refused RPC and the error code.
+    fn audit_refusal(&self, path: &str, principal: &pb::Principal, err: &AaError) {
+        let details = serde_json::json!({ "rpc": path, "denied": err.code.as_str_name(), "message": err.message });
+        if let Err(e) = self
+            .layer
+            .engine
+            .admin(principal, pb::AdminEventKind::Unspecified, path, details)
+        {
+            tracing::error!(error = %e, "could not audit a refused RPC");
+        }
+    }
 }
+
+/// The dispatch RPC: refused attempts are audited even though the RPC's own records come from the gate.
+const INVOKE_PATH: &str = "/agentic_anything.v1.RuntimeService/Invoke";
 
 fn header(h: &http::HeaderMap, name: &str) -> String {
     h.get(name)
@@ -335,11 +352,37 @@ mod tests {
             PeerRule::InProcess,
             h.engine.clone(),
         );
+        let before = h.entries().len();
         let st = grpc_status(&call(&agent, request("/agentic_anything.v1.RuntimeService/Invoke", None)).await).unwrap();
         assert_eq!(st.code(), tonic::Code::Unavailable);
         let e = decode_status(&st);
         assert_eq!(e.code(), pb::ErrorCode::EngineHalted);
         assert_eq!(e.recovery.unwrap().kind(), pb::RecoveryKind::RestartEngine);
+        // The refused attempt is audited.
+        let entries = h.entries();
+        assert_eq!(entries.len(), before + 1);
+        match &entries.last().unwrap().body {
+            Some(pb::audit_entry::Body::Admin(a)) => {
+                assert_eq!(a.subject, "/agentic_anything.v1.RuntimeService/Invoke");
+                assert!(
+                    a.details_json.contains("ERROR_CODE_ENGINE_HALTED"),
+                    "{}",
+                    a.details_json
+                );
+            }
+            other => panic!("expected an admin event, got {other:?}"),
+        }
+        // An audit-failure halt never appends.
+        h.engine.halt.halt(
+            pb::HaltSource::AuditVerifyFailed,
+            pb::HaltScope::Engine,
+            "",
+            "chain broken",
+        );
+        let before = h.entries().len();
+        let st = grpc_status(&call(&agent, request("/agentic_anything.v1.RuntimeService/Invoke", None)).await).unwrap();
+        assert_eq!(st.code(), tonic::Code::Unavailable);
+        assert_eq!(h.entries().len(), before);
         let resp = call(&agent, request("/agentic_anything.v1.EngineService/GetStatus", None)).await;
         assert!(grpc_status(&resp).is_none(), "GetStatus is allowed when halted");
     }

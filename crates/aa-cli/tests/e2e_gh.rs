@@ -29,7 +29,6 @@ capabilities:
 "#;
 
 #[test]
-#[ignore = "needs integration"]
 fn gh_alias_list_servable_under_confinement() {
     if which("gh").is_none() {
         return skip("gh_alias_list_servable_under_confinement", "gh is not on PATH");

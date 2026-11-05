@@ -38,7 +38,6 @@ expression: snap
           "output": "OUTPUT_MODE_JSON_STDOUT",
           "stateHandleEngineSupplied": true,
           "stateHandleFlag": "--project",
-          "stateHandlePointer": "/project",
           "usageExitCode": 2
         }
       },
@@ -76,10 +75,6 @@ expression: snap
         {
           "kind": "SCOPE_KIND_WRITE_PATH",
           "pointer": "/output_path"
-        },
-        {
-          "kind": "SCOPE_KIND_STATE_HANDLE",
-          "pointer": "/project"
         }
       ],
       "targetId": "notes",
@@ -130,7 +125,6 @@ expression: snap
           "output": "OUTPUT_MODE_JSON_STDOUT",
           "stateHandleEngineSupplied": true,
           "stateHandleFlag": "--project",
-          "stateHandlePointer": "/project",
           "usageExitCode": 2
         }
       },
@@ -164,12 +158,6 @@ expression: snap
         ]
       },
       "returnsTargetContent": true,
-      "scopes": [
-        {
-          "kind": "SCOPE_KIND_STATE_HANDLE",
-          "pointer": "/project"
-        }
-      ],
       "targetId": "notes",
       "title": {
         "source": "click-help",
@@ -213,7 +201,6 @@ expression: snap
           "output": "OUTPUT_MODE_JSON_STDOUT",
           "stateHandleEngineSupplied": true,
           "stateHandleFlag": "--project",
-          "stateHandlePointer": "/project",
           "usageExitCode": 2
         }
       },
@@ -247,12 +234,6 @@ expression: snap
         ]
       },
       "returnsTargetContent": true,
-      "scopes": [
-        {
-          "kind": "SCOPE_KIND_STATE_HANDLE",
-          "pointer": "/project"
-        }
-      ],
       "targetId": "notes",
       "title": {
         "source": "click-help",
@@ -302,7 +283,6 @@ expression: snap
           "output": "OUTPUT_MODE_JSON_STDOUT",
           "stateHandleEngineSupplied": true,
           "stateHandleFlag": "--project",
-          "stateHandlePointer": "/project",
           "usageExitCode": 2
         }
       },
@@ -336,12 +316,6 @@ expression: snap
         ]
       },
       "returnsTargetContent": true,
-      "scopes": [
-        {
-          "kind": "SCOPE_KIND_STATE_HANDLE",
-          "pointer": "/project"
-        }
-      ],
       "targetId": "notes",
       "title": {
         "source": "click-help",
@@ -385,7 +359,6 @@ expression: snap
           "output": "OUTPUT_MODE_JSON_STDOUT",
           "stateHandleEngineSupplied": true,
           "stateHandleFlag": "--project",
-          "stateHandlePointer": "/project",
           "usageExitCode": 2
         }
       },
@@ -419,12 +392,6 @@ expression: snap
         ]
       },
       "returnsTargetContent": true,
-      "scopes": [
-        {
-          "kind": "SCOPE_KIND_STATE_HANDLE",
-          "pointer": "/project"
-        }
-      ],
       "targetId": "notes",
       "title": {
         "source": "click-help",
@@ -462,7 +429,6 @@ expression: snap
           "output": "OUTPUT_MODE_JSON_STDOUT",
           "stateHandleEngineSupplied": true,
           "stateHandleFlag": "--project",
-          "stateHandlePointer": "/project",
           "usageExitCode": 2
         }
       },
@@ -496,12 +462,6 @@ expression: snap
         ]
       },
       "returnsTargetContent": true,
-      "scopes": [
-        {
-          "kind": "SCOPE_KIND_STATE_HANDLE",
-          "pointer": "/project"
-        }
-      ],
       "targetId": "notes",
       "title": {
         "source": "click-help",
@@ -538,7 +498,6 @@ expression: snap
           "output": "OUTPUT_MODE_JSON_STDOUT",
           "stateHandleEngineSupplied": true,
           "stateHandleFlag": "--project",
-          "stateHandlePointer": "/project",
           "usageExitCode": 2
         }
       },
@@ -572,12 +531,6 @@ expression: snap
         ]
       },
       "returnsTargetContent": true,
-      "scopes": [
-        {
-          "kind": "SCOPE_KIND_STATE_HANDLE",
-          "pointer": "/project"
-        }
-      ],
       "targetId": "notes",
       "title": {
         "source": "click-help",
