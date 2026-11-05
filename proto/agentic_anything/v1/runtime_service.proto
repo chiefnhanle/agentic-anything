@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+// RuntimeService: sessions and invocation. Every attempt after the capability
+// resolves writes exactly one ActionRecord, including rejected input, denials,
+// withheld capabilities and parked confirmations.
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/manifest.proto";
+import "agentic_anything/v1/record.proto";
+
+service RuntimeService {
+  // A session owns a private 0700 workspace (engine-supplied state handles,
+  // e.g. CLI-Anything --project), a PathScope, and a taint bit.
+  rpc OpenSession(OpenSessionRequest) returns (OpenSessionResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+    };
+  }
+  rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  rpc Invoke(InvokeRequest) returns (stream InvokeResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+    };
+  }
+  // Continue a parked action after a confirmation was decided on operator.sock.
+  // Re-runs halt, identity, generation and policy checks; any change in the
+  // action digest yields TARGET_STATE_CHANGED and a new confirmation.
+  rpc Resume(ResumeRequest) returns (stream ResumeResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+    };
+  }
+  rpc Cancel(CancelRequest) returns (CancelResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  // Receipts: check before retrying a non-idempotent action.
+  rpc GetActionStatus(GetActionStatusRequest) returns (GetActionStatusResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+}
+
+message OpenSessionRequest {
+  repeated string target_ids = 1;
+  // Requested ceiling; clamped by policy. UNKNOWN (zero) = policy default.
+  AuthorityTier authority_ceiling = 2;
+  // Extra read roots the caller wants to pass as path params (still policy-checked).
+  repeated string read_roots = 3;
+  string client_name = 4; // self-asserted
+}
+
+message OpenSessionResponse {
+  string session_id = 1;
+  string workspace_path = 2;
+  AuthorityTier effective_ceiling = 3;
+}
+
+message CloseSessionRequest {
+  string session_id = 1;
+  bool keep_workspace = 2;
+}
+
+message CloseSessionResponse {
+  string retained_workspace_path = 1;
+}
+
+message InvokeRequest {
+  string capability_id = 1;
+  string input_json = 2; // canonical input object; CLI flags are sugar over it
+  string session_id = 3; // "" = ephemeral session
+  bool dry_run = 4;
+  // Required for non-idempotent levels >= WRITE; front ends auto-generate.
+  string idempotency_key = 5;
+  string expected_catalog_digest = 6;
+  string expected_capability_digest = 7;
+  uint32 deadline_ms = 8;
+  // Agent-authored reason; shown to the human labelled as such.
+  string stated_reason = 9;
+  // If true, keep the stream open while a confirmation is pending.
+  bool wait_for_confirmation = 10;
+}
+
+message InvokeResult {
+  string output_json = 1; // validated against output_schema when known
+  ContentOrigin output_origin = 2; // TARGET by default
+  string output_blob_sha256 = 3; // when over the inline budget
+  repeated string evidence_ids = 4;
+  Outcome outcome = 5;
+}
+
+message InvokeResponse {
+  string action_id = 1; // set on every event
+  oneof event {
+    string progress = 2;
+    InvokeResult result = 3; // terminal
+    Error error = 4; // terminal (in-band; an ActionRecord exists)
+    PendingConfirmation confirmation = 5; // terminal unless wait_for_confirmation
+  }
+}
+
+message ResumeRequest {
+  string confirmation_id = 1;
+  string action_digest = 2; // must match the parked action
+}
+
+message ResumeResponse {
+  string action_id = 1;
+  oneof event {
+    string progress = 2;
+    InvokeResult result = 3;
+    Error error = 4;
+    PendingConfirmation confirmation = 5; // re-ask after drift
+  }
+}
+
+message CancelRequest {
+  string action_id = 1;
+}
+
+message CancelResponse {
+  Outcome outcome = 1;
+}
+
+message GetActionStatusRequest {
+  oneof key {
+    string action_id = 1;
+    string idempotency_key = 2;
+  }
+}
+
+message GetActionStatusResponse {
+  ActionRecord record = 1;
+}

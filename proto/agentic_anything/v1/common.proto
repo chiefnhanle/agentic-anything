@@ -1,0 +1,251 @@
+syntax = "proto3";
+
+// Shared vocabulary for the agentic-anything engine API (aad).
+//
+// Conventions (docs/design/architecture.md §6):
+// - Safety-relevant enums have a meaningful, fail-safe zero value. An omitted
+//   field can only ever mean "most restrictive" (ADR 0002). buf's
+//   ENUM_ZERO_VALUE_SUFFIX rule is disabled for exactly this reason.
+// - Non-safety enums use *_UNSPECIFIED.
+// - Every target-originated string travels as TargetText, never a bare string.
+package agentic_anything.v1;
+
+import "google/protobuf/descriptor.proto";
+
+// ---------------------------------------------------------------------------
+// RPC-level authority. The engine derives the caller's Role from the listener
+// the connection arrived on (agent.sock vs operator.sock), never from a request
+// field. aa-proto's build.rs reads this option from the descriptor set and
+// generates a static table; a method without it fails the build.
+// ---------------------------------------------------------------------------
+
+// Who is calling. Fail-safe zero: ROLE_NONE is never granted anything.
+enum Role {
+  ROLE_NONE = 0;
+  // agent.sock (and opt-in loopback TCP): invoke, read catalog, propose, query audit.
+  ROLE_AGENT = 1;
+  // operator.sock: decide confirmations, unhalt, issue grants, assume effects, admit.
+  ROLE_OPERATOR = 2;
+  // The engine's own pipeline steps (harvest, verify) passing through the same gate.
+  ROLE_ENGINE_INTERNAL = 3;
+}
+
+message RpcPolicy {
+  // Roles allowed to call the method. Empty means unreachable.
+  repeated Role roles = 1;
+  // Default false: refused while the kill switch is engaged.
+  bool allowed_when_halted = 2;
+  // Writes an AdminEvent audit entry for every call (operator RPCs).
+  bool audited = 3;
+}
+
+extend google.protobuf.MethodOptions {
+  RpcPolicy rpc_policy = 50001;
+}
+
+// ---------------------------------------------------------------------------
+// Tri-state values and confidence.
+// ---------------------------------------------------------------------------
+
+// Every effect bit is tri-state. Fail-safe zero: a missing field is UNKNOWN,
+// and policy treats UNKNOWN as TRUE (except `idempotent`, where UNKNOWN is FALSE).
+enum Tri {
+  TRI_UNKNOWN = 0;
+  TRI_FALSE = 1;
+  TRI_TRUE = 2;
+}
+
+// How a value is known. Fail-safe zero: PROPOSED is the weakest source and can
+// only ever raise an effect, never lower one.
+enum Confidence {
+  CONFIDENCE_PROPOSED = 0; // LLM or agent proposal
+  CONFIDENCE_INFERRED = 1; // rule tables: verbs, option names, help-text keywords
+  CONFIDENCE_DERIVED = 2; // computed from other fields (projections)
+  CONFIDENCE_DECLARED = 3; // typed self-description from a spec the operator marked trusted
+  CONFIDENCE_OPERATOR = 4; // attributed operator assertion over operator.sock
+  CONFIDENCE_OBSERVED = 5; // a verification lane observed it at a sufficient isolation
+}
+
+// What a lane or runtime run could actually contain or see.
+// Fail-safe zero: NOT_PROVEN.
+enum Isolation {
+  ISOLATION_NOT_PROVEN = 0;
+  ISOLATION_NONE = 1;
+  // Private cwd/HOME/TMPDIR, scrubbed env, owned process group, same uid.
+  // Sees writes inside the private root only; sees no network.
+  ISOLATION_PROCESS = 2;
+  // ISOLATION_PROCESS plus OS-enforced confinement (macOS Seatbelt via
+  // sandbox-exec, Linux Landlock): network denied, exec limited to the pinned
+  // binding executables, writes denied outside the private root and declared
+  // write scopes. Denials are enforced at runtime as well as in lanes.
+  ISOLATION_CONFINED = 3;
+  ISOLATION_CONTAINER = 4;
+  ISOLATION_VIRTUAL_MACHINE = 5;
+}
+
+// ---------------------------------------------------------------------------
+// Untrusted text.
+// ---------------------------------------------------------------------------
+
+// Fail-safe zero: TARGET (untrusted data, never instructions).
+enum ContentOrigin {
+  CONTENT_ORIGIN_TARGET = 0; // harvested help, docstrings, registry text, target output
+  CONTENT_ORIGIN_ENGINE = 1; // engine-authored templates
+  CONTENT_ORIGIN_OPERATOR = 2; // operator-reviewed text
+  CONTENT_ORIGIN_PROPOSAL = 3; // LLM/agent-proposed text accepted by the fence
+  CONTENT_ORIGIN_CALLER = 4; // echoed caller input
+}
+
+// Every human-readable string that did not originate in the engine. Front ends
+// must render `origin` (MCP: _meta + an explicit "untrusted" block) and may not
+// drop it, because the type carries it.
+message TargetText {
+  string text = 1;
+  ContentOrigin origin = 2;
+  // e.g. "click-help", "registry.json:description", "proposal:<id>".
+  string source = 3;
+}
+
+// ---------------------------------------------------------------------------
+// Principals.
+// ---------------------------------------------------------------------------
+
+enum Channel {
+  CHANNEL_UNSPECIFIED = 0;
+  CHANNEL_AGENT_SOCKET = 1;
+  CHANNEL_OPERATOR_SOCKET = 2;
+  CHANNEL_LOOPBACK_TCP = 3; // agent role only; bearer token required
+  CHANNEL_IN_PROCESS = 4; // tests / --embedded
+  CHANNEL_ENGINE_INTERNAL = 5;
+}
+
+// Recorded on every audit entry. Role and channel are engine-determined; the
+// client_* fields are self-asserted and recorded as such.
+message Principal {
+  Role role = 1;
+  Channel channel = 2;
+  uint32 uid = 3;
+  int32 pid = 4; // from peer credentials; 0 if unavailable
+  string exe_path = 5; // realpath of the peer executable, best effort
+  string exe_sha256 = 6; // set when the engine verified the peer binary
+  string process_start = 7; // defeats pid reuse, e.g. "darwin:<sec>:<usec>"
+  string client_name = 8; // self-asserted, e.g. "aa-cli"
+  string client_version = 9; // self-asserted
+  string mcp_client = 10; // self-asserted MCP clientInfo relayed by aa mcp
+}
+
+// ---------------------------------------------------------------------------
+// Errors. Before a capability resolves, errors are tonic Status with an encoded
+// Error in `details`. After it resolves, they are in-band in the ActionRecord.
+// ---------------------------------------------------------------------------
+
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  ERROR_CODE_INVALID_REQUEST = 1; // malformed or schema-rejected input
+  ERROR_CODE_UNRESOLVED_SELECTOR = 2; // valid shape, unknown id
+  ERROR_CODE_ACCESS_DENIED = 3; // wrong role/listener/peer
+  ERROR_CODE_POLICY_DENIED = 4; // deny rule or default deny
+  ERROR_CODE_EXCLUDED = 5; // hard exclusion (licence/DRM/anti-cheat/security product)
+  ERROR_CODE_CONFIRMATION_REQUIRED = 6;
+  ERROR_CODE_CONFIRMATION_DECLINED = 7;
+  ERROR_CODE_CONFIRMATION_EXPIRED = 8;
+  ERROR_CODE_ENGINE_HALTED = 9;
+  ERROR_CODE_CIRCUIT_OPEN = 10;
+  ERROR_CODE_CAPABILITY_WITHHELD = 11; // details carry Withheld[]
+  ERROR_CODE_CAPABILITY_UNAVAILABLE = 12; // binding or backend missing
+  ERROR_CODE_TARGET_UNAVAILABLE = 13;
+  ERROR_CODE_TARGET_IDENTITY_CHANGED = 14; // exe/backend/interpreter drifted since lock
+  ERROR_CODE_TARGET_STATE_CHANGED = 15; // generation moved since confirmation
+  ERROR_CODE_CATALOG_STALE = 16; // expected digest mismatch
+  ERROR_CODE_ACTION_UNCONFIRMED = 17; // ran, post-condition not observed
+  ERROR_CODE_EXECUTION_STATE_UNKNOWN = 18; // timeout/crash: may or may not have happened
+  ERROR_CODE_UPSTREAM_ERROR = 19; // target reported failure; upstream type kept in details
+  ERROR_CODE_UNREADABLE_OUTPUT = 20;
+  ERROR_CODE_TIMEOUT = 21;
+  ERROR_CODE_CANCELLED = 22;
+  ERROR_CODE_RESOURCE_CONSTRAINT = 23;
+  ERROR_CODE_CLEANUP_INCOMPLETE = 24;
+  ERROR_CODE_ISOLATION_NOT_PROVEN = 25;
+  ERROR_CODE_ADAPTER_PROTOCOL = 26;
+  ERROR_CODE_CONFIGURATION_INVALID = 27;
+  ERROR_CODE_AUDIT_UNAVAILABLE = 28; // intent could not be made durable: nothing dispatched
+  ERROR_CODE_INTERNAL = 29;
+}
+
+enum ErrorCategory {
+  ERROR_CATEGORY_UNSPECIFIED = 0;
+  ERROR_CATEGORY_INVALID_INPUT = 1;
+  ERROR_CATEGORY_AUTHORIZATION = 2;
+  ERROR_CATEGORY_UNAVAILABLE = 3;
+  ERROR_CATEGORY_INTEGRITY = 4;
+  ERROR_CATEGORY_TIMEOUT = 5;
+  ERROR_CATEGORY_CANCELLED = 6;
+  ERROR_CATEGORY_RESOURCE = 7;
+  ERROR_CATEGORY_EXECUTION = 8;
+  ERROR_CATEGORY_SAFETY_STOP = 9;
+}
+
+// Typed denial reasons (REA #545/#552 lesson): each names the layer that denied
+// and maps to exactly one remediation command that exists.
+enum DenialReason {
+  DENIAL_REASON_UNSPECIFIED = 0;
+  DENIAL_REASON_NO_MATCHING_ALLOW = 1; // default deny
+  DENIAL_REASON_DENY_RULE = 2;
+  DENIAL_REASON_OUTSIDE_PATH_SCOPE = 3;
+  DENIAL_REASON_GRANT_ABSENT = 4;
+  DENIAL_REASON_GRANT_EXPIRED = 5;
+  DENIAL_REASON_GRANT_REVOKED_OR_CONSUMED = 6;
+  DENIAL_REASON_ENFORCEMENT_UNAVAILABLE = 7; // needs confinement this host cannot provide
+  DENIAL_REASON_TIER_TOO_LOW = 8; // assurance tier below the rule's require_tier
+  DENIAL_REASON_HARD_EXCLUSION = 9;
+}
+
+enum RecoveryKind {
+  RECOVERY_KIND_UNSPECIFIED = 0;
+  RECOVERY_KIND_INSPECT_INPUT_CONTRACT = 1;
+  RECOVERY_KIND_RETRY = 2;
+  RECOVERY_KIND_RETRY_CLEANUP = 3;
+  RECOVERY_KIND_REOBSERVE_TARGET = 4;
+  // A human must act on operator.sock; the agent must not loop.
+  RECOVERY_KIND_AWAIT_CONFIRMATION = 5;
+  // Non-idempotent op: call GetActionStatus before any retry.
+  RECOVERY_KIND_CHECK_STATUS_BEFORE_RETRY = 6;
+  // Target drifted: re-run harvest/compile/verify.
+  RECOVERY_KIND_REDISTILL = 7;
+  // Engine unreachable or halted: restart/unhalt the engine, do not retry the call.
+  RECOVERY_KIND_RESTART_ENGINE = 8;
+}
+
+message Recovery {
+  RecoveryKind kind = 1;
+  // RPC or capability to call, e.g. "aa approve <id>" or "RuntimeService.GetActionStatus".
+  string operation = 2;
+  string arguments_json = 3;
+}
+
+message Error {
+  ErrorCode code = 1;
+  ErrorCategory category = 2;
+  // Engine-authored. Never echoes target text or secrets; target text goes in `upstream`.
+  string message = 3;
+  bool retryable = 4;
+  // Required, non-empty: one concrete next step (a command that exists).
+  string remediation = 5;
+  Recovery recovery = 6;
+  DenialReason denial_reason = 7;
+  // Target-originated failure text (e.g. CLI-Anything {"error","type"}), labelled.
+  TargetText upstream = 8;
+  // Typed per code, e.g. withheld reasons or limit facts.
+  string details_json = 9;
+}
+
+// Offset paging for collection RPCs.
+message PageRequest {
+  uint32 offset = 1;
+  uint32 limit = 2; // 0 = server default
+}
+
+message PageInfo {
+  uint32 next_offset = 1; // 0 = end
+  uint32 total = 2;
+}

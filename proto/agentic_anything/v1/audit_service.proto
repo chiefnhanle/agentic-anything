@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+// AuditService: read the hash-chained JSONL audit log.
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/record.proto";
+
+service AuditService {
+  rpc QueryAudit(QueryAuditRequest) returns (QueryAuditResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  rpc VerifyChain(VerifyChainRequest) returns (VerifyChainResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+}
+
+message QueryAuditRequest {
+  string target_id = 1;
+  string capability_id = 2;
+  string action_id = 3;
+  uint64 after_seq = 4;
+  uint32 limit = 5;
+  bool actions_only = 6; // skip intents and admin events
+}
+
+message QueryAuditResponse {
+  repeated AuditEntry entries = 1;
+  uint64 next_seq = 2; // 0 = end
+}
+
+message VerifyChainRequest {}
+
+message VerifyChainResponse {
+  bool intact = 1;
+  uint64 entries = 2;
+  uint64 first_broken_seq = 3;
+  string head_sha256 = 4;
+  // The head mirrored in audit/HEAD matches the last entry (truncation check).
+  bool head_matches = 5;
+  Error error = 6;
+}

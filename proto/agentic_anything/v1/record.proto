@@ -1,0 +1,395 @@
+syntax = "proto3";
+
+// Evidence, policy decisions, action records, the audit log, verification
+// records and the LLM proposal fence (ADRs 0006, 0007, 0003).
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/manifest.proto";
+import "google/protobuf/timestamp.proto";
+
+// ===========================================================================
+// Evidence
+// ===========================================================================
+
+message Evidence {
+  string evidence_id = 1; // "ev_" + sha256(JCS(record minus id))
+  string predicate_type = 2; // "aa.harvest" | "aa.observation" | "aa.verification"
+  string operation = 3;
+  string target_id = 4;
+  string identity_digest = 5;
+  Confidence confidence = 6;
+  Isolation isolation = 7;
+  string normalized_result_json = 8;
+  string raw_blob_sha256 = 9; // large raw payloads live in the CAS
+  repeated string limitations = 10;
+  // Required: what this record does NOT establish.
+  repeated string non_claims = 11;
+  google.protobuf.Timestamp observed_at = 12;
+}
+
+// ===========================================================================
+// Policy decisions and approvals
+// ===========================================================================
+
+// Fail-safe zero: DENY.
+enum Verdict {
+  VERDICT_DENY = 0;
+  VERDICT_ALLOW = 1;
+  VERDICT_ASK = 2;
+}
+
+// Where an approval came from. Never a tool argument (REA PR #555 lesson).
+// Fail-safe zero: NONE (no approval).
+enum ApprovalSource {
+  APPROVAL_SOURCE_NONE = 0;
+  APPROVAL_SOURCE_POLICY_ALLOW = 1; // an allow rule matched; no human involved
+  APPROVAL_SOURCE_STANDING_GRANT = 2; // a grant issued earlier over operator.sock
+  APPROVAL_SOURCE_OPERATOR_SOCKET = 3; // DecideConfirmation on operator.sock
+  // Host-mediated MCP elicitation relayed by a verified `aa mcp` binary.
+  // Only accepted where policy allows it (default: WRITE, never DESTRUCTIVE).
+  APPROVAL_SOURCE_HOST_ELICITATION = 4;
+}
+
+// What a confirmation actually proves, computed from proofs, never configured.
+// Fail-safe zero: SAME_PRINCIPAL (weakest).
+enum AssuranceTier {
+  ASSURANCE_TIER_SAME_PRINCIPAL = 0; // Tier 0: agent, aa mcp and human share a uid
+  ASSURANCE_TIER_SEPARATED_AGENT = 1; // Tier 1: agent uid != operator uid
+  ASSURANCE_TIER_ISOLATED_TARGET = 2; // Tier 2: Tier 1 + target in container/VM lane
+}
+
+message PolicyDecision {
+  Verdict verdict = 1;
+  // Every rule that matched; the strictest wins regardless of order.
+  repeated string matched_rule_ids = 2;
+  string deciding_rule_id = 3;
+  DenialReason denial_reason = 4;
+  ApprovalSource approval_source = 5;
+  string grant_id = 6;
+  string confirmation_id = 7;
+  AssuranceTier assurance = 8;
+  string policy_digest = 9; // sha256 of the policy file in force
+  repeated string reasons = 10; // engine-authored
+}
+
+// sha256(JCS(ActionDigestInput)) binds a confirmation to exactly one action.
+message ActionDigestInput {
+  string capability_id = 1;
+  string capability_digest = 2;
+  string lock_digest = 3;
+  string identity_digest = 4;
+  uint64 generation = 5;
+  string args_commitment = 6;
+  string policy_digest = 7;
+  bool dry_run = 8;
+}
+
+// A parked action awaiting a human on operator.sock. Single use, TTL.
+message PendingConfirmation {
+  string confirmation_id = 1;
+  string action_id = 2;
+  string action_digest = 3;
+  string capability_id = 4;
+  EffectLevel level = 5;
+  AuthorityTier tier = 6;
+  // Engine-authored rendering of what will run, where, with which effects.
+  string engine_summary = 7;
+  // Agent-supplied reason, shown separately and labelled.
+  TargetText agent_stated_reason = 8;
+  // Dry-run output if available (target-originated, labelled).
+  TargetText dry_run_preview = 9;
+  google.protobuf.Timestamp expires_at = 10;
+  // Approval sources policy accepts for this action.
+  repeated ApprovalSource acceptable_sources = 11;
+}
+
+// Narrow, expiring, revocable. Issued only over operator.sock.
+message Grant {
+  string grant_id = 1;
+  string target_id = 2;
+  string capability_glob = 3;
+  AuthorityTier max_tier = 4; // never DESTRUCTIVE or above
+  repeated string write_roots = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  uint32 max_uses = 7;
+  uint32 uses = 8;
+  string session_id = 9; // "" = any session of the issuing operator
+  bool revoked = 10;
+}
+
+// ===========================================================================
+// Action records
+// ===========================================================================
+
+// Fail-safe zero: UNKNOWN (may or may not have happened).
+enum Outcome {
+  OUTCOME_UNKNOWN = 0; // deadline/crash/intent-without-outcome
+  OUTCOME_COMPLETED = 1; // ran; for WRITE+, oracle confirmed
+  OUTCOME_COMPLETED_UNVERIFIED = 2; // ran; post-condition not checked or not observed
+  OUTCOME_FAILED = 3; // target reported failure; effects may still exist
+  OUTCOME_NOT_DISPATCHED = 4; // denied, rejected input, withheld, awaiting confirmation
+  OUTCOME_CANCELLED = 5; // cancelled before dispatch, or after with verified cleanup
+}
+
+enum FileChange {
+  FILE_CHANGE_UNSPECIFIED = 0;
+  FILE_CHANGE_CREATED = 1;
+  FILE_CHANGE_MODIFIED = 2;
+  FILE_CHANGE_DELETED = 3;
+}
+
+message ObservedFileEffect {
+  string path = 1; // relative to a watched root
+  string root = 2; // "private:home" | "private:cwd" | "scope:<pointer>"
+  FileChange change = 3;
+  string before_sha256 = 4;
+  string after_sha256 = 5;
+}
+
+enum CleanupStatus {
+  CLEANUP_STATUS_UNSPECIFIED = 0;
+  CLEANUP_STATUS_COMPLETE = 1;
+  CLEANUP_STATUS_INCOMPLETE = 2; // survivors in the owned group
+  CLEANUP_STATUS_UNVERIFIED = 3;
+}
+
+message ProcessReport {
+  int32 exit_code = 1;
+  int32 signal = 2;
+  uint64 stdout_bytes = 3;
+  uint64 stderr_bytes = 4;
+  TargetText stderr_excerpt = 5; // bounded, redacted
+  bool output_truncated = 6;
+  uint32 wall_ms = 7;
+  CleanupStatus cleanup = 8;
+  repeated string confinement_denials = 9; // e.g. "network-outbound", "process-exec:/bin/sh"
+  repeated string unowned_process_notes = 10; // e.g. LaunchServices-spawned soffice
+}
+
+// Exactly one per Invoke attempt after the capability resolved, including
+// REJECTED_INPUT, DENY, WITHHELD and awaiting-confirmation.
+message ActionRecord {
+  string action_id = 1; // "act_" + ULID
+  string capability_id = 2;
+  string capability_digest = 3;
+  string lock_digest = 4;
+  string catalog_digest = 5;
+  string identity_digest = 6; // as re-verified just before dispatch
+  // HMAC-SHA256(engine-local key, JCS(input)): equality without plain hashes of secrets.
+  string args_commitment = 7;
+  // Input with x-aa-secret params blanked.
+  string input_redacted_json = 8;
+  string action_digest = 9;
+  bool dry_run = 10;
+  string idempotency_key = 11;
+  Effects declared_effects = 12;
+  EffectLevel level = 13;
+  AuthorityTier tier = 14;
+  PolicyDecision decision = 15;
+  Isolation runtime_isolation = 16;
+  Principal principal = 17;
+  string session_id = 18;
+  repeated ObservedFileEffect observed_files = 19;
+  repeated string undeclared_effects = 20; // observed but not declared
+  Outcome outcome = 21;
+  ProcessReport process = 22;
+  Error error = 23;
+  repeated string residual_unknowns = 24;
+  repeated string evidence_ids = 25;
+  string output_sha256 = 26; // CAS digest of the full output
+  google.protobuf.Timestamp requested_at = 27;
+  google.protobuf.Timestamp dispatched_at = 28;
+  google.protobuf.Timestamp completed_at = 29;
+  // True when synthesized at boot from an intent with no outcome.
+  bool recovered = 30;
+}
+
+// Written and fsynced BEFORE dispatch for level WRITE and above (and for every
+// INTROSPECT pipeline action). On restart, an intent without an outcome yields
+// an ActionRecord{outcome: UNKNOWN, error: EXECUTION_STATE_UNKNOWN, recovered: true}.
+message ActionIntent {
+  string action_id = 1;
+  string capability_id = 2;
+  string capability_digest = 3;
+  string action_digest = 4;
+  string args_commitment = 5;
+  EffectLevel level = 6;
+  PolicyDecision decision = 7;
+  string idempotency_key = 8;
+}
+
+enum AdminEventKind {
+  ADMIN_EVENT_KIND_UNSPECIFIED = 0;
+  ADMIN_EVENT_KIND_ENGINE_START = 1;
+  ADMIN_EVENT_KIND_ENGINE_STOP = 2;
+  ADMIN_EVENT_KIND_HALT = 3;
+  ADMIN_EVENT_KIND_UNHALT = 4;
+  ADMIN_EVENT_KIND_TARGET_REGISTERED = 5; // carries the authorization statement
+  ADMIN_EVENT_KIND_EFFECT_ASSUMED = 6; // one entry per assumed field
+  ADMIN_EVENT_KIND_ADMISSION_CHANGED = 7;
+  ADMIN_EVENT_KIND_CONFIRMATION_DECIDED = 8;
+  ADMIN_EVENT_KIND_GRANT_ISSUED = 9;
+  ADMIN_EVENT_KIND_GRANT_REVOKED = 10;
+  ADMIN_EVENT_KIND_POLICY_LOADED = 11;
+  ADMIN_EVENT_KIND_PROPOSAL_APPLIED = 12;
+  ADMIN_EVENT_KIND_CHAIN_VERIFY_FAILED = 13;
+}
+
+message AdminEvent {
+  AdminEventKind kind = 1;
+  string subject = 2; // target id, capability id, grant id, confirmation id
+  string details_json = 3;
+  TargetText operator_note = 4;
+}
+
+// One line of the JSONL audit log (audit/segment-<n>.jsonl), proto3-JSON.
+// entry_sha256 = sha256(JCS(this with entry_sha256 = "")); prev_sha256 links
+// to the previous entry. Tamper-evident, not tamper-proof (same uid can rewrite).
+message AuditEntry {
+  uint64 seq = 1;
+  string prev_sha256 = 2;
+  string entry_sha256 = 3;
+  google.protobuf.Timestamp written_at = 4;
+  Principal principal = 5;
+  uint64 halt_epoch = 6;
+  oneof body {
+    ActionIntent intent = 10;
+    ActionRecord action = 11;
+    AdminEvent admin = 12;
+  }
+}
+
+// ===========================================================================
+// Verification
+// ===========================================================================
+
+enum Lane {
+  LANE_UNSPECIFIED = 0;
+  LANE_STATIC = 1; // L0: closed schema, refs resolve, names unique, effects decided-or-withheld
+  LANE_PARSER = 2; // L1: unknown flag / wrong type -> usage error, no file change
+  LANE_DRY_RUN = 3; // L2: native dry run leaves state handle unchanged
+  LANE_SANDBOX_DIFF = 4; // L3: observed effects subset of declared, at recorded isolation
+  LANE_READ_BACK = 5; // L4: oracle fails on seed, passes after
+  LANE_GOLDEN = 6; // L5
+  LANE_DIFFERENTIAL = 7; // L6
+  LANE_PROPERTY = 8; // L7
+  LANE_AGENT = 9; // L8 routing eval (separate from correctness)
+}
+
+// Fail-safe zero: NOT_RUN (never counts as coverage).
+enum LaneStatus {
+  LANE_STATUS_NOT_RUN = 0;
+  LANE_STATUS_PASSED = 1;
+  LANE_STATUS_FAILED = 2;
+  LANE_STATUS_SKIPPED = 3; // never counts as coverage
+  LANE_STATUS_ERROR = 4; // harness failure, e.g. backend unreachable
+}
+
+message VerificationRecord {
+  string record_id = 1; // "vr_" + sha256
+  string capability_id = 2;
+  string capability_digest = 3;
+  Lane lane = 4;
+  LaneStatus status = 5;
+  string skip_reason = 6;
+  string lock_digest = 7;
+  string identity_digest = 8;
+  Isolation isolation = 9;
+  string host = 10; // os/arch
+  string engine_version = 11;
+  repeated string action_ids = 12; // pipeline actions that produced it
+  repeated string evidence_ids = 13;
+  repeated string non_claims = 14; // required
+  repeated EffectSignal effect_signals = 15; // OBSERVED signals this lane emits
+  repeated ObservedFileEffect observed_files = 16;
+  repeated Withheld findings = 17; // e.g. SIDE_EFFECT, PARSER_MISMATCH
+  google.protobuf.Timestamp ran_at = 18;
+}
+
+// ===========================================================================
+// The LLM boundary: ManifestProposal (ADR 0003 §fence)
+// ===========================================================================
+
+// An LLM (or a human) never edits the lock. It submits a proposal; the engine
+// validates every op mechanically and records accepted ops with provenance.
+// Hard rejects: stale base_lock_digest, unknown capability ids, any op that
+// lowers an effect, widens a schema, or touches admission/grants/assumptions.
+message ManifestProposal {
+  string proposal_id = 1;
+  string author = 2; // self-asserted, e.g. "claude via aa mcp"
+  string target_id = 3;
+  string base_lock_digest = 4;
+  repeated ProposalOp ops = 5;
+}
+
+message ProposalOp {
+  oneof op {
+    RenameOp rename = 1;
+    DescribeOp describe = 2;
+    FamilyOp family = 3;
+    CoreSetOp core = 4;
+    RaiseEffectOp raise_effect = 5;
+    PairOracleOp pair_oracle = 6;
+    ExcludeOp exclude = 7;
+    RefineSchemaOp refine_schema = 8;
+    AddExampleOp add_example = 9;
+    AddBranchOp add_branch = 10;
+  }
+  string rationale = 20;
+}
+
+message RenameOp {
+  string capability_id = 1;
+  string new_id = 2;
+}
+
+message DescribeOp {
+  string capability_id = 1;
+  string title = 2; // <= 64 chars
+  string description = 3; // <= 1024 chars, no control characters
+  string use_when = 4; // <= 200 chars
+}
+
+message FamilyOp {
+  string capability_id = 1;
+  string family = 2;
+}
+
+message CoreSetOp {
+  repeated string capability_ids = 1;
+}
+
+// value must be TRI_TRUE (or TRI_FALSE for `idempotent` only).
+message RaiseEffectOp {
+  string capability_id = 1;
+  string field = 2;
+  Tri value = 3;
+}
+
+message PairOracleOp {
+  string capability_id = 1;
+  Oracle oracle = 2;
+}
+
+message ExcludeOp {
+  string capability_id = 1;
+  string reason = 2;
+}
+
+// RFC 6902 patch over input_schema_json that may only narrow.
+message RefineSchemaOp {
+  string capability_id = 1;
+  string json_patch = 2;
+}
+
+message AddExampleOp {
+  string capability_id = 1;
+  Example example = 2;
+}
+
+// Branches may only raise effects.
+message AddBranchOp {
+  string capability_id = 1;
+  EffectBranch branch = 2;
+}

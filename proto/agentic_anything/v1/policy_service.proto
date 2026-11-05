@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+// PolicyService: explain decisions, confirmations, grants. Approval authority
+// comes from the listener: only operator.sock may decide or issue.
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/record.proto";
+
+service PolicyService {
+  // Dry run of the same evaluator the gate uses. Never dispatches.
+  rpc ExplainPolicy(ExplainPolicyRequest) returns (ExplainPolicyResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  rpc ListPendingConfirmations(ListPendingConfirmationsRequest) returns (ListPendingConfirmationsResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  // Operator-only. Bound to the action digest; single use; TTL.
+  rpc DecideConfirmation(DecideConfirmationRequest) returns (DecideConfirmationResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_OPERATOR]
+      audited: true
+    };
+  }
+  // Host-mediated MCP elicitation relayed by `aa mcp`. Accepted only if
+  // (1) the peer executable is verified (pid -> realpath -> sha256) to be the
+  // engine's pinned `aa` binary, (2) policy lists APPROVAL_SOURCE_HOST_ELICITATION
+  // for the action's level (default: WRITE only, never DESTRUCTIVE), and
+  // (3) the assurance tier permits it (default off in Tier >= 1).
+  // Recorded as host-mediated, never as operator approval.
+  rpc RelayElicitation(RelayElicitationRequest) returns (RelayElicitationResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_AGENT]
+      audited: true
+    };
+  }
+  rpc IssueGrant(IssueGrantRequest) returns (IssueGrantResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_OPERATOR]
+      audited: true
+    };
+  }
+  rpc ListGrants(ListGrantsRequest) returns (ListGrantsResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  // Agents may revoke grants (narrowing), never mint them.
+  rpc RevokeGrant(RevokeGrantRequest) returns (RevokeGrantResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+      audited: true
+    };
+  }
+}
+
+message ExplainPolicyRequest {
+  string capability_id = 1;
+  string input_json = 2;
+  string session_id = 3;
+}
+
+message ExplainPolicyResponse {
+  PolicyDecision decision = 1;
+  // Exactly one remediation command per denial reason; a test asserts it exists.
+  string remediation = 2;
+}
+
+message ListPendingConfirmationsRequest {
+  string session_id = 1;
+}
+
+message ListPendingConfirmationsResponse {
+  repeated PendingConfirmation pending = 1;
+}
+
+enum Decision {
+  DECISION_UNSPECIFIED = 0; // rejected as malformed
+  DECISION_APPROVE = 1;
+  DECISION_DECLINE = 2;
+}
+
+message DecideConfirmationRequest {
+  string confirmation_id = 1;
+  string action_digest = 2; // must equal the parked digest
+  Decision decision = 3;
+  string note = 4;
+}
+
+message DecideConfirmationResponse {
+  PendingConfirmation confirmation = 1;
+}
+
+enum ElicitationAction {
+  ELICITATION_ACTION_UNSPECIFIED = 0; // treated as decline
+  ELICITATION_ACTION_ACCEPT = 1;
+  ELICITATION_ACTION_DECLINE = 2;
+  ELICITATION_ACTION_CANCEL = 3; // same as decline: do not act
+}
+
+message RelayElicitationRequest {
+  string confirmation_id = 1;
+  string action_digest = 2;
+  ElicitationAction action = 3;
+  string mcp_client = 4; // self-asserted clientInfo
+}
+
+message RelayElicitationResponse {
+  bool accepted = 1;
+  Error error = 2; // ACCESS_DENIED when the relay principal is not proven
+}
+
+message IssueGrantRequest {
+  Grant grant = 1; // grant_id/uses/revoked ignored
+}
+
+message IssueGrantResponse {
+  Grant grant = 1;
+}
+
+message ListGrantsRequest {
+  string target_id = 1;
+}
+
+message ListGrantsResponse {
+  repeated Grant grants = 1;
+}
+
+message RevokeGrantRequest {
+  string grant_id = 1;
+}
+
+message RevokeGrantResponse {
+  Grant grant = 1;
+}

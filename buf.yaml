@@ -1,0 +1,17 @@
+# buf v2 module config for agentic-anything (see docs/design/adr/0001-rust-grpc-engine.md).
+version: v2
+modules:
+  - path: proto
+lint:
+  use:
+    - STANDARD
+  except:
+    # Deliberate (ADR 0002): safety-relevant enums use a *meaningful, fail-safe*
+    # zero value (TRI_UNKNOWN, ADMISSION_STATE_WITHHELD, VERDICT_DENY, ...)
+    # instead of *_UNSPECIFIED, so an omitted field can only ever mean "most
+    # restrictive". A proptest in aa-core asserts every zero value evaluates to
+    # the most restrictive behaviour. Non-safety enums still use *_UNSPECIFIED.
+    - ENUM_ZERO_VALUE_SUFFIX
+breaking:
+  use:
+    - FILE

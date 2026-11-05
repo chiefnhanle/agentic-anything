@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+// Out-of-process adapter protocol (ADR 0008). Served by adapters in any
+// language; the engine is the client (rpc_policy role ENGINE_INTERNAL).
+// Two framings of the same messages:
+//   1. gRPC over a 0600 UDS inside a per-run 0700 dir (long-lived, sessions, bridges).
+//   2. one-shot: `<exe> --aa-oneshot <Method>`; proto3-JSON request on stdin,
+//      JSONL proto3-JSON responses on stdout. Exit codes: 0 ok, 64 bad request,
+//      65 refused/out of authority, 69 dependency unavailable, 70 internal, 75 temporary.
+// The adapter proposes; the engine decides: adapters return candidates and raw
+// native signals, never effects or admission.
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/manifest.proto";
+
+service AdapterService {
+  // Must succeed first; every field is compared by the engine.
+  rpc Handshake(HandshakeRequest) returns (HandshakeResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_ENGINE_INTERNAL]
+    };
+  }
+  rpc Harvest(AdapterServiceHarvestRequest) returns (stream AdapterServiceHarvestResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_ENGINE_INTERNAL]
+    };
+  }
+  rpc Invoke(AdapterServiceInvokeRequest) returns (stream AdapterServiceInvokeResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_ENGINE_INTERNAL]
+    };
+  }
+  rpc GetRequestStatus(GetRequestStatusRequest) returns (GetRequestStatusResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_ENGINE_INTERNAL]
+    };
+  }
+  // State read used by oracles and pre/post observations.
+  rpc Observe(ObserveRequest) returns (ObserveResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_ENGINE_INTERNAL]
+    };
+  }
+  rpc Shutdown(AdapterServiceShutdownRequest) returns (AdapterServiceShutdownResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_ENGINE_INTERNAL]
+    };
+  }
+}
+
+message AdapterIdentity {
+  string id = 1; // "aa.click-info"
+  string version = 2;
+  string language = 3; // "python3.14"
+  string executable_sha256 = 4; // the engine verifies independently
+}
+
+message HandshakeRequest {
+  string run_id = 1; // from the 0600 descriptor; must be echoed
+  string protocol_version = 2; // "agentic_anything.v1.adapter"
+  uint64 max_frame_bytes = 3;
+  string engine_version = 4;
+}
+
+message HandshakeResponse {
+  string run_id = 1;
+  string protocol_version = 2;
+  uint64 max_frame_bytes = 3; // must equal the request
+  AdapterIdentity identity = 4;
+  repeated string operations = 5; // exact set; compared to the manifest
+  repeated string harvesters = 6;
+  TargetIdentity target = 7; // for bridges living inside a host app
+  uint64 generation = 8; // changes when the active document/window changes
+}
+
+message AdapterServiceHarvestRequest {
+  string harvester = 1;
+  TargetIdentity target = 2;
+  DiscoveryAuthority max_authority = 3;
+  map<string, string> options = 4;
+}
+
+// Verbatim bytes; the engine stores them in the CAS. candidates() over these
+// bytes is a pure engine-side function, so CI replays them with no adapter.
+message RawArtifact {
+  string name = 1; // "click-info.json"
+  string media_type = 2;
+  bytes content = 3;
+}
+
+message AdapterServiceHarvestResponse {
+  oneof event {
+    RawArtifact raw = 1;
+    Error error = 2;
+    string next_probe = 3; // suggested follow-up (inferred)
+  }
+}
+
+message AdapterServiceInvokeRequest {
+  string request_id = 1; // engine-chosen, used for receipts
+  string operation = 2;
+  string input_json = 3; // already validated against the canonical schema
+  uint32 deadline_ms = 4;
+  uint64 expected_generation = 5; // refuse if the host moved on
+  bool dry_run = 6;
+}
+
+message AdapterServiceInvokeResponse {
+  oneof event {
+    string progress = 1;
+    string output_json = 2; // terminal
+    Error error = 3; // terminal; upstream reasons preserved as TargetText
+  }
+}
+
+// Fail-safe zero: UNKNOWN_ID (the engine must not assume it did not run).
+enum RequestState {
+  REQUEST_STATE_UNKNOWN_ID = 0;
+  REQUEST_STATE_RUNNING = 1;
+  REQUEST_STATE_COMPLETED = 2;
+  REQUEST_STATE_FAILED = 3;
+  REQUEST_STATE_POISONED = 4; // deadline passed while the host could not cancel
+}
+
+message GetRequestStatusRequest {
+  string request_id = 1;
+}
+
+message GetRequestStatusResponse {
+  RequestState state = 1;
+}
+
+message ObserveRequest {
+  string view = 1;
+  string args_json = 2;
+}
+
+message ObserveResponse {
+  string state_json = 1;
+  bool complete = 2; // false => predicates decided by omission must fail
+  uint64 generation = 3;
+}
+
+message AdapterServiceShutdownRequest {}
+
+message AdapterServiceShutdownResponse {
+  repeated string retained = 1; // resources it could not close
+}

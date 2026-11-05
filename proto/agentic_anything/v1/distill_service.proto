@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+// DistillService: discover -> characterize -> synthesize -> verify -> package.
+// Every effectful step (INTROSPECT harvest, lane runs) is itself an audited
+// pipeline action (capability ids under "aa.pipeline.*") through the same gate.
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/manifest.proto";
+import "agentic_anything/v1/record.proto";
+
+service DistillService {
+  rpc Harvest(HarvestRequest) returns (stream HarvestResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+    };
+  }
+  // Pure: lock = compile(harvest artifacts, overlay, rule versions).
+  rpc Compile(CompileRequest) returns (CompileResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+    };
+  }
+  rpc Verify(VerifyRequest) returns (stream VerifyResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+    };
+  }
+  rpc Package(PackageRequest) returns (PackageResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+    };
+  }
+  // Bounded context pack for an LLM proposer; all target text is TargetText.
+  rpc GetProposalContext(GetProposalContextRequest) returns (GetProposalContextResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  // The only way LLM output enters the manifest. Agent-callable: the fence
+  // only lets ops raise effects, narrow schemas, describe, group, pair oracles
+  // (still unverified) and add examples.
+  rpc ApplyProposal(ApplyProposalRequest) returns (ApplyProposalResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      audited: true
+    };
+  }
+}
+
+message HarvestRequest {
+  string target_id = 1;
+  repeated string harvesters = 2; // empty = all applicable
+  DiscoveryAuthority max_authority = 3; // default INTROSPECT
+  bool allow_network = 4; // default false
+}
+
+message HarvestSummary {
+  repeated SourceRef sources = 1;
+  uint32 candidate_count = 2;
+  repeated string skipped_harvesters = 3;
+}
+
+message HarvestResponse {
+  string action_id = 1; // the audited pipeline action
+  oneof event {
+    string progress = 2;
+    SourceRef source = 3;
+    Error error = 4; // per-harvester failure; harvest continues
+    HarvestSummary summary = 5; // terminal
+  }
+}
+
+message CompileRequest {
+  string target_id = 1;
+  bool check = 2; // CI drift mode: fail if the on-disk lock differs, write nothing
+}
+
+message CompileResponse {
+  string lock_digest = 1;
+  repeated string added = 2;
+  repeated string removed = 3;
+  // Capabilities whose capability_digest changed: admission reset to WITHHELD.
+  repeated string changed = 4;
+  uint32 effects_unknown_count = 5;
+  uint32 unresolved_branch_count = 6;
+  uint32 writes_without_oracle_count = 7;
+  bool drifted = 8; // only meaningful with check=true
+}
+
+message VerifyRequest {
+  string target_id = 1;
+  repeated string capability_ids = 2; // empty = all
+  repeated Lane lanes = 3; // empty = what each level requires
+  repeated string require_tools = 4; // a missing tool => FAILED, not SKIPPED
+  // Minimum lane isolation; the engine refuses lowering below what a field needs.
+  Isolation min_isolation = 5;
+}
+
+message VerifySummary {
+  uint32 servable = 1;
+  uint32 withheld = 2;
+  uint32 failed = 3;
+  uint32 skipped = 4;
+  TargetStatus target_status = 5;
+  string lock_digest = 6;
+}
+
+message VerifyResponse {
+  oneof event {
+    string progress = 1;
+    VerificationRecord record = 2;
+    VerifySummary summary = 3; // terminal
+  }
+}
+
+enum Renderer {
+  RENDERER_UNSPECIFIED = 0;
+  RENDERER_MCP_TYPED = 1;
+  RENDERER_MCP_SEARCH = 2;
+  RENDERER_CLI_TREE = 3;
+  RENDERER_SKILL_MD = 4;
+  RENDERER_SERVER_JSON = 5;
+}
+
+message PackageRequest {
+  string target_id = 1;
+  repeated Renderer renderers = 2;
+  bool check = 3; // drift mode
+}
+
+message RenderedFile {
+  string path = 1; // relative to the target's packages/ dir
+  string sha256 = 2;
+  bool drifted = 3;
+}
+
+message PackageResponse {
+  repeated RenderedFile files = 1;
+  string catalog_digest = 2;
+}
+
+message GetProposalContextRequest {
+  string target_id = 1;
+  uint32 max_bytes = 2;
+}
+
+message GetProposalContextResponse {
+  string base_lock_digest = 1;
+  repeated Capability candidates = 2;
+  repeated TargetText raw_help_excerpts = 3;
+  // Engine-authored rules of the fence, for the proposer's prompt.
+  string fence_rules = 4;
+}
+
+message ApplyProposalRequest {
+  ManifestProposal proposal = 1;
+  bool validate_only = 2;
+}
+
+message RejectedOp {
+  uint32 index = 1;
+  string reason = 2;
+}
+
+message ApplyProposalResponse {
+  repeated uint32 accepted = 1;
+  repeated RejectedOp rejected = 2;
+  bool whole_proposal_rejected = 3; // hard reject (assume/admission/grant keys, stale base)
+  string overlay_sha256 = 4;
+}

@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+// CatalogService: what front ends advertise. The exposure projection's digest
+// is the catalog identity (REA catalogIdentity.ts).
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/manifest.proto";
+import "agentic_anything/v1/record.proto";
+
+service CatalogService {
+  rpc ListCapabilities(ListCapabilitiesRequest) returns (ListCapabilitiesResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  rpc SearchCapabilities(SearchCapabilitiesRequest) returns (SearchCapabilitiesResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  rpc DescribeCapability(DescribeCapabilityRequest) returns (DescribeCapabilityResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  // The exact projection a front end serves.
+  rpc GetExposure(GetExposureRequest) returns (GetExposureResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  // Emits whenever the catalog digest for the given profile changes
+  // (MCP tools/list_changed).
+  rpc WatchCatalog(WatchCatalogRequest) returns (stream WatchCatalogResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+}
+
+message ListCapabilitiesRequest {
+  string target_id = 1; // empty = all
+  string family = 2;
+  bool servable_only = 3;
+  EffectLevel max_level = 4; // UNKNOWN (zero) = no filter
+  PageRequest page = 5;
+}
+
+message ListCapabilitiesResponse {
+  repeated CapabilitySummary capabilities = 1;
+  PageInfo page = 2;
+}
+
+message CapabilitySummary {
+  string id = 1;
+  TargetText title = 2;
+  EffectLevel level = 3;
+  AuthorityTier tier = 4;
+  AdmissionState admission = 5;
+  repeated Withheld withheld = 6;
+  string mcp_name = 7;
+  string cli_path = 8;
+}
+
+message SearchCapabilitiesRequest {
+  string query = 1;
+  string target_id = 2;
+  uint32 limit = 3;
+}
+
+message SearchCapabilitiesResponse {
+  repeated CapabilitySummary results = 1;
+}
+
+message DescribeCapabilityRequest {
+  string capability_id = 1;
+}
+
+message DescribeCapabilityResponse {
+  Capability capability = 1;
+  repeated VerificationRecord records = 2;
+}
+
+enum ExposureProfile {
+  EXPOSURE_PROFILE_UNSPECIFIED = 0;
+  EXPOSURE_PROFILE_MCP_TYPED = 1; // core set (<= 30/target) as typed tools
+  EXPOSURE_PROFILE_MCP_SEARCH = 2; // aa_search + aa_describe + aa_invoke
+  EXPOSURE_PROFILE_CLI = 3;
+}
+
+message GetExposureRequest {
+  ExposureProfile profile = 1;
+  repeated string target_ids = 2;
+  repeated string families = 3;
+  bool include_withheld = 4; // listed disabled with reasons, never callable
+}
+
+message ExposedTool {
+  string name = 1; // MCP tool name or CLI path
+  string capability_id = 2;
+  string title = 3; // engine-authored
+  // Engine template + at most 300 chars of vendor text inside an explicit
+  // "Vendor description (untrusted data)" block.
+  string description = 4;
+  string input_schema_json = 5; // advertised profile; engine re-validates canonical
+  string output_schema_json = 6;
+  McpHints hints = 7;
+  // _meta.aa: capability_id, effects, level, tier, mutates_session, origin labels.
+  string meta_json = 8;
+  bool enabled = 9;
+}
+
+message GetExposureResponse {
+  repeated ExposedTool tools = 1;
+  string catalog_digest = 2;
+}
+
+message WatchCatalogRequest {
+  ExposureProfile profile = 1;
+  repeated string target_ids = 2;
+}
+
+message WatchCatalogResponse {
+  string catalog_digest = 1;
+}

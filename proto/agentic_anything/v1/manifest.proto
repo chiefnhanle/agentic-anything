@@ -1,0 +1,555 @@
+syntax = "proto3";
+
+// The capability IR (ADR 0003). On disk it is proto3-JSON, RFC 8785-canonical:
+//   targets/<id>/capabilities.lock.json = CapabilityLock
+// compiled deterministically as lock = compile(harvest artifacts, overlay, rule versions).
+// The human-written overlay (target.aa.yaml) is YAML and is NOT a proto message;
+// its schema is documented in architecture.md §7.2 and parsed by aa-core::manifest.
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+
+// ===========================================================================
+// Effects
+// ===========================================================================
+
+// REA ToolEffects (rea src/contracts/toolEffects.ts:2-22) made tri-state, split
+// target-facing vs control-plane, and extended for driving.
+//
+// Binding-intrinsic execution is NOT an effect: running the binding's own
+// identity-pinned executable (and interpreter) in an engine-owned process group
+// under kill scope OWNED_GROUP is covered by the target registration. Only
+// cli_argv bindings with KILL_SCOPE_OWNED_GROUP qualify (REA toolEffects.ts:12-18).
+message Effects {
+  // ---- target-facing (drive level, authority, readOnlyHint) ----
+  Tri mutates_target = 1;
+  // Writes outside the engine's private runtime root (and outside its tmp/).
+  Tri writes_filesystem = 2;
+  // Starts a process beyond the binding-intrinsic executable.
+  Tri launches_process = 3;
+  // Non-loopback network.
+  Tri accesses_network = 4;
+  Tri changes_ui_state = 5;
+  Tri sends_input = 6; // synthetic keyboard/mouse/AX action
+  Tri may_discard_data = 7;
+  Tri executes_foreign_code = 8; // scripts, macros, plugins outside the declared binding
+  Tri mutates_device = 9;
+  Tri external_side_effect = 10; // send, publish, pay, upload: irreversible outside the host
+  Tri attaches_process = 11; // debugger/hooks into a process the engine did not start
+  Tri reads_screen = 12;
+  Tri reads_clipboard = 13;
+  Tri writes_clipboard = 14;
+  Tri reads_credentials = 15;
+  Tri irreversible = 16; // cannot be undone by the app's undo or by restore
+  // ---- control-plane (exposed in _meta only; never affects readOnlyHint) ----
+  Tri mutates_session = 17;
+  // ---- safe direction is TRUE: combination is AND, UNKNOWN counts as FALSE ----
+  Tri idempotent = 18;
+}
+
+// One contribution to one effect field. The lock keeps every signal so the
+// result is auditable and recomputable.
+message EffectSignal {
+  string field = 1; // Effects field name, e.g. "may_discard_data"
+  Tri value = 2;
+  Confidence confidence = 3;
+  // "harvest:click-info@1", "rule:cli-verbs@1", "overlay:assume", "proposal:<id>",
+  // "verify:<record_id>", "operator:<audit_seq>".
+  string source = 4;
+  string rationale = 5;
+  repeated string evidence_ids = 6;
+  // For OBSERVED lowering: the isolation the observation ran at.
+  Isolation isolation = 7;
+}
+
+// A flag- or argument-conditioned effect raise (pilot: gh --clobber/--force,
+// gh api -X). Branch effects are max-combined into the capability when the
+// condition matches the request; an unresolved branch blocks admission.
+message EffectBranch {
+  // JSON pointer into the input, e.g. "/force".
+  string pointer = 1;
+  // Canonical JSON value that triggers the branch; "" = "present and truthy".
+  string equals_json = 2;
+  Effects effects = 3;
+  repeated EffectSignal signals = 4;
+}
+
+// Derived, never authored. Fail-safe zero: UNKNOWN (never servable).
+enum EffectLevel {
+  EFFECT_LEVEL_UNKNOWN = 0;
+  EFFECT_LEVEL_READ = 1;
+  EFFECT_LEVEL_UI = 2;
+  EFFECT_LEVEL_WRITE = 3;
+  EFFECT_LEVEL_DESTRUCTIVE = 4;
+}
+
+// Invocation authority ladder (projection of effects + binding kind).
+// Fail-safe zero: UNKNOWN is evaluated as the highest tier.
+// Reconciles PLAN.md observe/launch/attach/inject/mutate and safety-rails §9.
+enum AuthorityTier {
+  AUTHORITY_TIER_UNKNOWN = 0;
+  AUTHORITY_TIER_OBSERVE = 1;
+  AUTHORITY_TIER_LAUNCH = 2; // starts an app/process beyond the binding
+  AUTHORITY_TIER_DRIVE = 3; // UI input into an identity-bound window
+  AUTHORITY_TIER_WRITE = 4; // additive/overwriting change inside declared scope
+  AUTHORITY_TIER_DESTRUCTIVE = 5; // discard, irreversible, external side effect, foreign code
+  AUTHORITY_TIER_ATTACH = 6; // debugger/hooks into a running process
+  AUTHORITY_TIER_INJECT = 7; // dynamic instrumentation (owned software only)
+  AUTHORITY_TIER_MUTATE_SYSTEM = 8; // install, OS settings
+}
+
+// Derived with REA's annotationsFromEffects formula over target-facing fields.
+message McpHints {
+  bool read_only = 1;
+  bool destructive = 2;
+  bool idempotent = 3;
+  bool open_world = 4;
+}
+
+// ===========================================================================
+// Target
+// ===========================================================================
+
+enum TargetKind {
+  TARGET_KIND_UNSPECIFIED = 0;
+  TARGET_KIND_CLI_TOOL = 1;
+  TARGET_KIND_CLI_ANYTHING_HARNESS = 2;
+  TARGET_KIND_INSTALLED_APP = 3;
+  TARGET_KIND_SERVICE_API = 4;
+  TARGET_KIND_MCP_SERVER = 5;
+}
+
+// Scaffolded -> live-verified -> hardened (REA walkthrough §What to distill 10).
+enum TargetStatus {
+  TARGET_STATUS_UNSPECIFIED = 0;
+  TARGET_STATUS_SCAFFOLDED = 1;
+  TARGET_STATUS_LIVE_VERIFIED = 2;
+  TARGET_STATUS_HARDENED = 3;
+}
+
+enum DiscoveryAuthority {
+  DISCOVERY_AUTHORITY_UNSPECIFIED = 0;
+  DISCOVERY_AUTHORITY_STATIC = 1; // read files only
+  DISCOVERY_AUTHORITY_INTROSPECT = 2; // call self-description; runs target code (gated, audited)
+  DISCOVERY_AUTHORITY_PROBE = 3; // invoke with test args; verification lanes only
+  DISCOVERY_AUTHORITY_EXPLORE = 4; // drive UI / write state; container or VM lanes only
+}
+
+// One identity-pinned file. Re-checked (stat tuple, rehash on change) before
+// every dispatch.
+message FileIdentity {
+  string role = 1; // "executable" | "interpreter" | "backend:soffice" | "entry_module"
+  string realpath = 2;
+  string sha256 = 3;
+  string version_banner = 4;
+}
+
+message TargetIdentity {
+  repeated FileIdentity files = 1;
+  string bundle_id = 2;
+  string origin = 3; // loopback service base URL
+  string spec_sha256 = 4; // digest of the primary harvested self-description
+  string source_tree_sha = 5; // e.g. git tree of a CLI-Anything harness dir
+  string identity_digest = 6; // sha256(JCS(this with identity_digest = ""))
+}
+
+message License {
+  string spdx = 1;
+  string url = 2;
+  bool bring_your_own = 3;
+  string notes = 4;
+}
+
+enum PreconditionKind {
+  PRECONDITION_KIND_UNSPECIFIED = 0;
+  PRECONDITION_KIND_BINARY = 1; // e.g. backend:soffice must resolve and match identity
+  PRECONDITION_KIND_CREDENTIAL = 2; // e.g. gh auth
+  PRECONDITION_KIND_OS_CONSENT = 3; // TCC Automation/Accessibility: human=true
+  PRECONDITION_KIND_PROCESS = 4; // app running / not running
+  PRECONDITION_KIND_CONTEXT = 5; // cwd must be a repo, etc.
+  PRECONDITION_KIND_CONFINEMENT = 6; // capability admitted only under ISOLATION_CONFINED
+}
+
+message Precondition {
+  string id = 1; // "binary:soffice", "credential:gh-auth", "confinement:seatbelt"
+  PreconditionKind kind = 2;
+  TargetText description = 3;
+  bool needs_human = 4;
+  string check_capability_id = 5; // optional READ capability that tests it
+  Confidence confidence = 6;
+}
+
+message SourceRef {
+  string harvester = 1; // "cli-anything-registry@1", "click-info@1", "cobra-complete@1"
+  string uri = 2;
+  string sha256 = 3; // CAS digest of the verbatim raw artifact
+  DiscoveryAuthority authority = 4;
+  google.protobuf.Timestamp harvested_at = 5;
+  string action_id = 6; // the audited pipeline action that produced it
+}
+
+// Seed-state recipe built inside a lane's private root before each run.
+message Fixture {
+  string id = 1;
+  repeated FixtureStep steps = 2;
+  string ready_capability_id = 3;
+}
+
+message FixtureStep {
+  oneof step {
+    // Run a (not necessarily servable) capability inside the lane only.
+    CapabilityCall capability = 1;
+    // Run a pinned helper argv inside the root, e.g. ["git","init","-q","r"].
+    ArgvStep argv = 2;
+    // Write a file relative to the root.
+    FileStep file = 3;
+    // Build another fixture first (composition; cycles rejected by L0).
+    string include_fixture = 4;
+  }
+}
+
+message CapabilityCall {
+  string capability_id = 1;
+  string input_json = 2; // may use {"$root": "/rel/path"}
+}
+
+message ArgvStep {
+  repeated string argv = 1; // argv[0] must be a pinned FileIdentity role
+  string cwd = 2; // relative to the root
+}
+
+message FileStep {
+  string path = 1;
+  bytes content = 2;
+}
+
+message Example {
+  string input_json = 1;
+  string fixture_id = 2;
+  string source = 3; // "overlay" | "proposal:<id>" | "harvest"
+}
+
+message Target {
+  string id = 1; // [a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)*
+  string display_name = 2;
+  TargetKind kind = 3;
+  TargetIdentity identity = 4;
+  License license = 5;
+  repeated Precondition preconditions = 6;
+  repeated SourceRef sources = 7;
+  TargetStatus status = 8;
+  // Required at registration; recorded verbatim in the audit log. Introspection
+  // (which runs target code) is refused for a target without one.
+  string authorization_statement = 9;
+  repeated Fixture fixtures = 10;
+  string mcp_prefix = 11;
+  TargetText description = 12;
+  repeated string families = 13;
+}
+
+// ===========================================================================
+// Capability
+// ===========================================================================
+
+enum Lifetime {
+  LIFETIME_UNSPECIFIED = 0;
+  LIFETIME_ONESHOT = 1;
+  LIFETIME_SESSION = 2;
+  LIFETIME_STREAM = 3;
+}
+
+// Fail-safe zero: WITHHELD. A capability is born withheld.
+enum AdmissionState {
+  ADMISSION_STATE_WITHHELD = 0;
+  ADMISSION_STATE_SERVABLE = 1; // ladder requirement for its level met
+  ADMISSION_STATE_EXCLUDED = 2; // hard exclusion or overlay `exclude`; never servable
+}
+
+// REA agent-environments withheld reasons (docs/agent-environments.md:175-186), generalized.
+enum WithheldReason {
+  WITHHELD_REASON_UNSPECIFIED = 0;
+  WITHHELD_REASON_NOT_VERIFIED = 1; // no PASSED lane records for the current lock
+  WITHHELD_REASON_EFFECTS_UNKNOWN = 2; // hint names the undecided fields
+  WITHHELD_REASON_NO_ORACLE = 3;
+  WITHHELD_REASON_UNCONFIRMED = 4;
+  WITHHELD_REASON_CONTRADICTED = 5;
+  WITHHELD_REASON_SIDE_EFFECT = 6; // observed effect not declared
+  WITHHELD_REASON_UNEXPLAINED_CHANGE = 7;
+  WITHHELD_REASON_SCHEMA_INVALID = 8;
+  WITHHELD_REASON_PARSER_MISMATCH = 9;
+  WITHHELD_REASON_PRECONDITION_UNMET = 10; // e.g. backend binary missing, confinement unavailable
+  WITHHELD_REASON_EXCLUDED_BY_POLICY = 11; // licence/activation/DRM surfaces
+  WITHHELD_REASON_INTERACTIVE = 12; // REPL/TTY-only
+  WITHHELD_REASON_MIXED_AUTHORITY = 13; // unresolved effect branch (e.g. gh api -X)
+  WITHHELD_REASON_OPERATOR_EXCLUDED = 14;
+}
+
+message Withheld {
+  WithheldReason reason = 1;
+  // What to do next; never changes what is served.
+  string hint = 2;
+  repeated string evidence_ids = 3;
+}
+
+message Admission {
+  AdmissionState state = 1;
+  repeated Withheld withheld = 2;
+  // PASSED VerificationRecord ids bound to the current lock_digest + identity_digest.
+  repeated string verification_record_ids = 3;
+  // Isolation the capability must be served under (copied from its verifying lane).
+  Isolation required_runtime_isolation = 4;
+}
+
+enum ScopeKind {
+  SCOPE_KIND_UNSPECIFIED = 0;
+  SCOPE_KIND_READ_PATH = 1;
+  SCOPE_KIND_WRITE_PATH = 2;
+  SCOPE_KIND_STATE_HANDLE = 3; // CLI-Anything --project: engine-supplied by default
+  SCOPE_KIND_HOST = 4;
+  SCOPE_KIND_WINDOW = 5;
+}
+
+// Which input parameters designate touched resources. Path scopes are
+// canonicalized by the engine and checked against the PathScope (deny wins).
+message ScopeParam {
+  string pointer = 1;
+  ScopeKind kind = 2;
+}
+
+enum DryRunKind {
+  DRY_RUN_KIND_UNSPECIFIED = 0;
+  DRY_RUN_KIND_PREVIEW = 1; // reports the plan
+  DRY_RUN_KIND_NO_PERSIST = 2; // computes but does not save (CLI-Anything --dry-run)
+}
+
+message DryRun {
+  bool supported = 1;
+  repeated string argv = 2; // inserted as global args, e.g. ["--dry-run"]
+  DryRunKind kind = 3;
+  bool verified = 4; // L2 passed for the current lock
+}
+
+message Provenance {
+  repeated string source_shas = 1; // SourceRef.sha256 values
+  repeated string native_ids = 2; // click path, cobra path, operationId, sdef code
+  map<string, Confidence> field_confidence = 3; // "input_schema" -> DECLARED
+  repeated string proposal_ids = 4;
+}
+
+message Projections {
+  string mcp_name = 1; // ^[a-zA-Z0-9_-]{1,64}$, derived, collision-suffixed (6 hex)
+  bool mcp_omit = 2;
+  string cli_path = 3; // "writer add-paragraph"
+  string cli_omit_reason = 4;
+  TargetText use_when = 5;
+}
+
+message Capability {
+  string id = 1; // "<target>.<noun-path>.<verb>"
+  string target_id = 2;
+  string family = 3;
+  TargetText title = 4;
+  TargetText description = 5;
+  // Closed JSON Schema 2020-12 (root additionalProperties:false), canonical JSON.
+  string input_schema_json = 6;
+  // "" = unknown output shape.
+  string output_schema_json = 7;
+  Effects effects = 8; // combined (max over admissible signals)
+  repeated EffectSignal signals = 9;
+  repeated EffectBranch branches = 10;
+  EffectLevel level = 11; // derived
+  AuthorityTier tier = 12; // derived
+  McpHints hints = 13; // derived
+  repeated ScopeParam scopes = 14;
+  Binding binding = 15;
+  repeated Oracle oracles = 16;
+  DryRun dry_run = 17;
+  // Default true (REA TARGET_CONTENT_FREE_TOOLS inverted).
+  bool returns_target_content = 18;
+  Lifetime lifetime = 19;
+  repeated Precondition preconditions = 20;
+  Provenance provenance = 21;
+  Admission admission = 22;
+  bool core = 23; // in the curated core set (<= 30 per target)
+  Projections projections = 24;
+  repeated Example examples = 25;
+  // sha256(JCS(schema, binding, effects, signals, branches, oracles, scopes, dry_run)).
+  // Admission and operator reviews carry over only while this is unchanged.
+  string capability_digest = 26;
+}
+
+// The compiled lock file: targets/<id>/capabilities.lock.json.
+message CapabilityLock {
+  string schema = 1; // "aa.lock/v1"
+  Target target = 2;
+  repeated Capability capabilities = 3;
+  // Versions of every rule table and harvester that contributed (compile is a
+  // pure function of harvest artifacts + overlay + these).
+  map<string, string> rule_versions = 4;
+  string overlay_sha256 = 5;
+  // sha256(JCS(this with lock_digest = "")).
+  string lock_digest = 6;
+}
+
+// ===========================================================================
+// Bindings
+// ===========================================================================
+
+message Binding {
+  oneof kind {
+    CliArgvBinding cli = 1;
+    McpToolBinding mcp = 2;
+    HttpOperationBinding http = 3;
+    GrpcMethodBinding grpc = 4;
+    AdapterOperationBinding adapter = 5;
+  }
+}
+
+// Kill scope is declared per binding (REA engine-bridges distill 7).
+enum KillScope {
+  KILL_SCOPE_UNSPECIFIED = 0;
+  KILL_SCOPE_OWNED_GROUP = 1; // engine-spawned process group; may signal
+  KILL_SCOPE_OWN_PID_ONLY = 2;
+  KILL_SCOPE_NONE = 3; // attached/external; never signalled
+}
+
+enum OutputMode {
+  OUTPUT_MODE_UNSPECIFIED = 0;
+  OUTPUT_MODE_JSON_STDOUT = 1;
+  // Normalized by the engine to {"text": str, "lines": [str]} so oracles can use pointers.
+  OUTPUT_MODE_TEXT_STDOUT = 2;
+  OUTPUT_MODE_NONE = 3;
+}
+
+enum ErrorConvention {
+  ERROR_CONVENTION_UNSPECIFIED = 0;
+  ERROR_CONVENTION_EXIT_CODE = 1; // nonzero exit = failure, bounded stderr excerpt
+  ERROR_CONVENTION_CLI_ANYTHING_JSON = 2; // {"error": str, "type": str} on stdout + exit 1
+}
+
+enum ArgStyle {
+  ARG_STYLE_UNSPECIFIED = 0;
+  // Always emitted as "--flag=value" so a value starting with "-" can never be
+  // parsed as an option.
+  ARG_STYLE_OPTION = 1;
+  ARG_STYLE_FLAG = 2; // "--flag" when true, omitted when false
+  ARG_STYLE_REPEATED_OPTION = 3; // "--flag=a --flag=b"
+  ARG_STYLE_POSITIONAL = 4; // emitted after "--"
+  ARG_STYLE_NEGATABLE_FLAG = 5; // "--flag" / "--no-flag"
+}
+
+message ArgMapping {
+  string pointer = 1; // JSON pointer into the input object
+  ArgStyle style = 2;
+  string flag = 3; // "--text"
+  uint32 position = 4; // order among positionals
+  // True if the native parser rejects "--opt=value" (verified by L1); then
+  // "--opt value" is used and values starting with "-" are refused.
+  bool no_equals_form = 5;
+}
+
+// Never a shell. argv = [executable] + interpreter_args + global_args
+// + [state_handle] + dry_run.argv? + command_path + fixed_args + mapped options
+// + ["--", positionals...].
+message CliArgvBinding {
+  string executable_role = 1; // FileIdentity.role to exec, e.g. "interpreter" or "executable"
+  repeated string interpreter_args = 2; // e.g. ["-I", "-m", "cli_anything.libreoffice"]
+  repeated string global_args = 3; // fixed, never exposed, e.g. ["--json"], ["--no-optional-locks"]
+  repeated string command_path = 4; // ["writer", "add-paragraph"]
+  repeated ArgMapping args = 5;
+  OutputMode output = 6;
+  ErrorConvention errors = 7;
+  // State handle (CLI-Anything --project). Default: engine-supplied from the
+  // session workspace; agent-supplied only when the overlay exposes it, and
+  // then always checked against the PathScope.
+  string state_handle_flag = 8;
+  string state_handle_pointer = 9;
+  bool state_handle_engine_supplied = 10;
+  uint32 deadline_ms = 11;
+  uint64 max_output_bytes = 12;
+  KillScope kill_scope = 13;
+  // Click/Cobra usage-error exit code, used by L1 (Click: 2).
+  int32 usage_exit_code = 14;
+  // Extra env vars allowed through the scrub (names only; values from the binding).
+  map<string, string> env = 15;
+  string cwd_pointer = 16; // optional input pointer used as cwd (path-scoped)
+  // Some parsers use the runtime-error exit code for usage errors too (Cobra/gh:
+  // exit 1 + "unknown flag"); L1 then also requires this stderr marker.
+  string usage_stderr_marker = 17;
+  // Fixed, never-exposed args after command_path, e.g. ["--porcelain=v2", "--branch"].
+  repeated string fixed_args = 18;
+}
+
+message McpToolBinding {
+  string server_ref = 1;
+  string tool_name = 2;
+}
+
+message HttpOperationBinding {
+  string method = 1;
+  string path_template = 2;
+  string operation_id = 3;
+}
+
+message GrpcMethodBinding {
+  string full_method = 1; // "/pkg.Service/Method"
+  bool server_streaming = 2;
+}
+
+message AdapterOperationBinding {
+  string adapter_id = 1;
+  string operation = 2;
+}
+
+// ===========================================================================
+// Oracles (how a write is confirmed)
+// ===========================================================================
+
+message Oracle {
+  oneof kind {
+    ReadBackOracle read_back = 1;
+    FileOracle file = 2;
+    // Delete/remove: the read must NOT find the item afterwards, and a bogus-id
+    // negative control must fail (pilot §What to distill 6).
+    NegativeOracle negative = 3;
+  }
+}
+
+enum PredicateOp {
+  PREDICATE_OP_UNSPECIFIED = 0;
+  PREDICATE_OP_EXISTS = 1;
+  PREDICATE_OP_EQUALS = 2;
+  PREDICATE_OP_CONTAINS = 3;
+  PREDICATE_OP_COUNT_DELTA = 4; // array length after - before == value
+  PREDICATE_OP_ABSENT = 5;
+}
+
+// Declarative, no regex. Must FAIL on the seed and PASS after the write, or the
+// oracle itself is not admitted.
+message Predicate {
+  string pointer = 1; // into the read capability's output
+  PredicateOp op = 2;
+  string value_json = 3; // may reference input: {"$input": "/text"}
+}
+
+message ReadBackOracle {
+  string capability_id = 1; // must be a SERVABLE READ capability
+  string args_template_json = 2; // {"project": {"$input": "/project"}}
+  repeated Predicate predicates = 3;
+}
+
+// CLI-Anything output-verification doctrine: magic bytes + size.
+message FileOracle {
+  string path_pointer = 1;
+  bytes magic_prefix = 2;
+  uint64 min_size = 3;
+}
+
+message NegativeOracle {
+  string capability_id = 1;
+  string args_template_json = 2;
+  repeated Predicate predicates = 3;
+  // Input for the negative control (a bogus id); the write must fail on it.
+  string bogus_input_json = 4;
+}

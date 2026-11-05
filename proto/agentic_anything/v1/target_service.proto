@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+// TargetService: register targets, import CLI-Anything harnesses, and record
+// attributed operator effect assumptions.
+package agentic_anything.v1;
+
+import "agentic_anything/v1/common.proto";
+import "agentic_anything/v1/manifest.proto";
+
+service TargetService {
+  rpc ListTargets(ListTargetsRequest) returns (ListTargetsResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  rpc GetTarget(GetTargetRequest) returns (GetTargetResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      allowed_when_halted: true
+    };
+  }
+  // STATIC only: resolves and pins identity, writes the starter overlay.
+  // Registering with an authorization statement is what later permits
+  // INTROSPECT (which runs target code) to run without a per-run ask.
+  rpc CreateTarget(CreateTargetRequest) returns (CreateTargetResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      audited: true
+    };
+  }
+  // STATIC read of registry.json + harness dir from a LOCAL checkout.
+  // Never runs registry install_cmd. Never installs anything: the interpreter
+  // must already exist (engine-managed venv install is a separate gated
+  // pipeline action, M2).
+  rpc ImportCliAnything(ImportCliAnythingRequest) returns (ImportCliAnythingResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [
+        ROLE_AGENT,
+        ROLE_OPERATOR
+      ]
+      audited: true
+    };
+  }
+  // Operator-only, per field, attributed, audited (one AdminEvent per field).
+  // Replaces a blanket --accept-assumptions. Never accepted from a proposal.
+  rpc AssumeEffects(AssumeEffectsRequest) returns (AssumeEffectsResponse) {
+    option (agentic_anything.v1.rpc_policy) = {
+      roles: [ROLE_OPERATOR]
+      audited: true
+    };
+  }
+}
+
+message ListTargetsRequest {
+  PageRequest page = 1;
+}
+
+message ListTargetsResponse {
+  repeated Target targets = 1;
+  PageInfo page = 2;
+}
+
+message GetTargetRequest {
+  string target_id = 1;
+}
+
+message GetTargetResponse {
+  Target target = 1;
+  string lock_digest = 2;
+}
+
+message TargetLocator {
+  oneof locator {
+    string executable = 1; // name on PATH or absolute path
+    string python_console_script = 2; // "<venv>/bin/<entry_point>"
+    string bundle_path = 3; // .app
+    string service_origin = 4; // loopback only
+    string mcp_command_json = 5; // ["npx","-y","pkg@1.2.3"]
+    string openapi_path = 6;
+  }
+}
+
+message CreateTargetRequest {
+  string target_id = 1;
+  TargetLocator locator = 2;
+  // Required, non-empty; recorded verbatim (TARGET_REGISTERED admin event).
+  string authorization_statement = 3;
+  // Harvesters to run later, e.g. ["cobra-complete", "help-text"]; empty = auto.
+  repeated string harvesters = 4;
+}
+
+message CreateTargetResponse {
+  Target target = 1;
+  string overlay_path = 2;
+}
+
+message ImportCliAnythingRequest {
+  string repo_path = 1; // e.g. /Users/me/CLI-Anything
+  repeated string harnesses = 2; // registry names; empty = list only
+  // Interpreter that already has the harness installed (operator-installed venv).
+  string python = 3;
+  string authorization_statement = 4;
+}
+
+message ImportedHarness {
+  string name = 1;
+  string target_id = 2; // "cli-anything.<name>"
+  string source_tree_sha = 3;
+  // registry install_cmd kept verbatim as a raw artifact, never executed.
+  string install_cmd_artifact_sha256 = 4;
+  Error error = 5;
+}
+
+message ImportCliAnythingResponse {
+  repeated ImportedHarness harnesses = 1;
+  repeated string available = 2;
+}
+
+message EffectAssumption {
+  string field = 1; // Effects field name
+  Tri value = 2;
+  string capability_glob = 3; // "" = whole target (still recorded per field)
+  string reason = 4; // required
+}
+
+message AssumeEffectsRequest {
+  string target_id = 1;
+  repeated EffectAssumption assumptions = 2;
+}
+
+message AssumeEffectsResponse {
+  repeated uint64 audit_seqs = 1; // one AdminEvent per assumption
+  string overlay_sha256 = 2;
+}
