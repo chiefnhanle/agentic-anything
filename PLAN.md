@@ -1,5 +1,7 @@
 # agentic-anything — Plan & cold-start state (as of 2026-11-04)
 
+> **Stale (2026-11-04).** Research, design and engine slice 1 have since landed. See `HANDOFF.md` for current state and next steps.
+
 ## Goal
 Distill REA (github.com/morluto/rea, `rea-agents` MCP server) into a universal
 observe + drive control plane: one MCP/API through which an agent observes and
